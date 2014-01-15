@@ -1,0 +1,10 @@
+name: Michael on development
+author: Michael Pollmeier
+description: Scala, Gremlin-Scala and other development related things
+url: http://mpollmeier.github.io
+safe: false
+lsi: false
+pygments: true
+markdown: redcarpet
+exclude: ['Gemfile', 'Gemfile.lock']
+permalink: pretty
