@@ -198,6 +198,7 @@ acronym, abbr {
 #header h1 a {
 	border: none;
   color: #fff;
+  text-shadow: -1px -1px #4444bb;
 }
 #header .description {
   font-style: italic;
