@@ -2,7 +2,7 @@
 layout: post
 title: Eclipse, PyDev and virtualenv
 date: 2011-11-25 04:19:47.000000000 +01:00
-permalink: maven-skip-pgp-sign-process
+permalink: eclipse-pydev-and-virtualenv
 tag:
   - eclipse
   - python
