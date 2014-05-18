@@ -22,13 +22,42 @@ Elasticsearch
 =======================
 All I needed was something that precomputes indexes and can combine composite indexes in arbitrary queries. So I gave <a href="http://elasticsearch.org">Elasticsearch</a> a try and it seems to work really well for this use case. Elasticsearch let's you persist arbitrary documents and automatically creates indexes on all the fields. It has some nice strategies like nested and parent/child documents that allow it to effectively shard the documents yet allow for powerful searches. E.g. if you define a collection inside your document as a <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-nested-type.html">nested type</a>, elasticsearch will index it as a separate entity, yet assure that it's hosted on the same shard as it's parent. By default it creates indexes for all provided fields and it's very efficient for combining indexes. 
 
-Setting up an index and some documents is really nice and easy with it's rest crud api. There's plenty of examples in the net and the documentation is pretty good, so I'll only describe it on a high level
+Setting up an index and some documents is really nice and easy with it's rest crud api: 
+
+```json
+{
+  "member":{
+      "name" : {"type": "string", "index": "not_analyzed"},
+      "age" : {"type": "integer"},
+      "properties":{
+        "transactions": {
+          "type": "nested",
+          "properties": {
+            "genre": {"type": "string"},
+            "date": {"type": "date"}
+          }
+        }
+      }
+    }
+}
+```
 
 * members have an age and a (non-indexed) name
 * transactions is a nested array inside members
 * a transaction has a price and a date 
 
-For my test case I set up 1 million members and 10 million transactions - to make that batch insert go fast I used <a href="http://spray.io">spray</a> to send those http requests. That part itself is quite interesting for learning spray and Akka, so I've included the code in the appendix. 
+For my test case I set up 1 million members and 10 million transactions - to make that batch insert go fast I used <a href="http://spray.io">spray</a> to send those http requests. That part itself is quite interesting for learning spray and Akka, so I've included the code in the appendix. A typical member looks like this:
+
+```json
+{
+  "name": "Member 1",
+  "age": 25,
+  "transactions": [ 
+    {"genre": "action", "date": "2014-05-17"}, 
+    {"genre": "horror", "date": "2014-04-01"} 
+  ]
+}
+```
 
 Querying Elasticsearch
 =======================
