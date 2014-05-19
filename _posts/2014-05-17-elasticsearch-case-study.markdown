@@ -8,60 +8,61 @@ tags: [elasticsearch, case-study, analytics, spray]
 
 What we're trying to do
 =======================
-At <a href="http://movio.co">Movio</a> we aggregate a lot of information about cinema loyalty members and want to be able to find members based on arbitrary criteria. A common example would be: __find all members who are between 20 and 30 years and have seen an action movie in the last month__.
-
-For the past couple of weekends I've been playing with some tools to better solve this problem. Here's our criteria:
+If you want to do big data analytics there are many solutions out there to do that. For the past couple of weekends I've been playing with some of them, and it looks like I finally found a great tool for my use case: Elasticsearch. A typical question you might want to answer could be: 
+__Find the number of members who are between 20 and 30 years old and have borrowed a book of a certain author last month__. 
+Here's some criteria for the solution: 
 
 * arbitrary ad-hoc queries should return numbers within a minute
 * (linearly) scalable to very large amounts of data 
 * update speed not critical
 
-I'm a <a href="https://github.com/mpollmeier/gremlin-scala">graph database enthusiast</a> so I first tried to solve this with <a href="https://github.com/thinkaurelius/titan">Titan</a> (a distributed graph database). However I learned that a graph db <a href="https://groups.google.com/forum/#!topic/aureliusgraphs/lwDP8Eh8z9E">is not the right tool</a> for this particular problem.
+I'm a <a href="https://github.com/mpollmeier/gremlin-scala">graph database enthusiast</a> so I first tried to solve this with <a href="https://github.com/thinkaurelius/titan">Titan</a> (a distributed graph database). However I learned that a graph db <a href="https://groups.google.com/forum/#!topic/aureliusgraphs/lwDP8Eh8z9E">is not the right tool</a> for this particular problem. 
 
-Elasticsearch
-=======================
 All I needed was something that precomputes indexes and can combine composite indexes in arbitrary queries. So I gave <a href="http://elasticsearch.org">Elasticsearch</a> a try and it seems to work really well for this use case. Elasticsearch let's you persist arbitrary documents and automatically creates indexes on all the fields. It has some nice strategies like nested and parent/child documents that allow it to effectively shard the documents yet allow for powerful searches. E.g. if you define a collection inside your document as a <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-nested-type.html">nested type</a>, elasticsearch will index it as a separate entity, yet assure that it's hosted on the same shard as it's parent. By default it creates indexes for all provided fields and it's very efficient for combining indexes. 
 
-Setting up an index and some documents is really nice and easy with it's rest crud api: 
+Setup with elasticsearch
+=======================
+
+Setting up an index and some documents is really nice and easy with it's rest api: 
 
 ```json
 {
   "member":{
-      "name" : {"type": "string", "index": "not_analyzed"},
-      "age" : {"type": "integer"},
-      "properties":{
-        "transactions": {
-          "type": "nested",
-          "properties": {
-            "genre": {"type": "string"},
-            "date": {"type": "date"}
-          }
+    "name" : {"type": "string", "index": "not_analyzed"},
+    "age" : {"type": "integer"},
+    "properties":{
+      "books": {
+        "type": "nested",
+        "properties": {
+          "author": {"type": "string"},
+          "borrowedOn": {"type": "date"}
         }
       }
     }
+  }
 }
 ```
 
-* members have an age and a (non-indexed) name
-* transactions is a nested array inside members
-* a transaction has a price and a date 
+* member has an age and a (non-indexed) name
+* books is a nested array inside members
+* a book has an author and the information when the member borrowed it
 
-For my test case I set up 1 million members and 10 million transactions - to make that batch insert go fast I used <a href="http://spray.io">spray</a> to send those http requests. That part itself is quite interesting for learning spray and Akka, so I've included the code in the appendix. A typical member looks like this:
+For my test case I set up 1 million members and 10 million borrowed books - to make that batch insert go fast I used <a href="http://spray.io">spray</a> to send those http requests. That part itself is quite interesting for learning spray and Akka, so I've included the code in the appendix. A typical member looks like this:
 
 ```json
 {
-  "name": "Member 1",
+  "name": "member 1",
   "age": 25,
-  "transactions": [ 
-    {"genre": "action", "date": "2014-05-17"}, 
-    {"genre": "horror", "date": "2014-04-01"} 
+  "books": [ 
+    {"author": "ranicki", "borrowedOn": "2014-05-17"}, 
+    {"author": "klein", "borrowedOn": "2014-04-01"} 
   ]
 }
 ```
 
 Querying Elasticsearch
 =======================
-Now that everything is setup we are ready to query elasticsearch. Remember we want to find all members who are between 20 and 30 years and have seen an action movie in the last month. Here's how you can do that using curl: 
+Now that everything is setup we are ready to query elasticsearch. Remember we want to find the number of members who are between 20 and 30 years and have borrowed a book written by ranicki in the last month. Here's how you can do that using curl: 
 
 ```bash
 curl http://localhost:9200/members/member/_search?pretty=true -d '{
@@ -74,17 +75,17 @@ curl http://localhost:9200/members/member/_search?pretty=true -d '{
       },
       { 
         "nested": {
-          "path": "transactions",
+          "path": "books",
           "query": {
-            "term": { "transactions.genre": "action" }
+            "term": { "books.author": "ranicki" }
           }
         }
       },
       { 
         "nested": {
-          "path": "transactions",
+          "path": "books",
           "query": {
-            "range": { "transactions.date": { "gt" : "2014-04-18", "lt" : "2014-05-18" } }
+            "range": { "books.borrowedOn": { "gt" : "2014-04-18", "lt" : "2014-05-18" } }
           }
         }
       }
@@ -100,7 +101,7 @@ Appendix: setup
 =======================
 <a href="http://www.elasticsearch.org/downloads/">Download</a> elasticsearch and start it with _bin/elasticsearch_
 
-The spray-client code to setup the index, members and transactions. The full repo is on <a href="https://github.com/mpollmeier/elasticsearch-sprayclient">github</a> if you wanna play yourself. 
+The spray-client code to setup the index, members and books. The full repo is on <a href="https://github.com/mpollmeier/elasticsearch-sprayclient">github</a> if you wanna play yourself. 
 
 ```scala
 package spray
@@ -145,11 +146,11 @@ object ElasticSearchTryout extends App {
             "name" : {"type": "string", "index": "not_analyzed"},
             "age" : {"type": "integer"},
             "properties":{
-              "transactions": {
+              "books": {
                 "type": "nested",
                 "properties": {
-                  "genre": {"type": "string"},
-                  "date": {"type": "date"}
+                  "author": {"type": "string"},
+                  "borrowedOn": {"type": "date"}
                 }
               }
             }
@@ -196,22 +197,22 @@ class MemberCreator(pipeline: Future[SendReceive]) extends Actor {
 
   def createMember(id: Int): Future[HttpResponse] = {
     val age = 12 + rand.nextInt(50)
-    val transactionCount = rand.nextInt(averageTxCountPerMember * 2)
-    val transactions = (0 until transactionCount) map createTransaction
+    val bookCount = rand.nextInt(averageTxCountPerMember * 2)
+    val books = (0 until bookCount) map createBook
     val request = Put(s"/members/member/$id", s"""
       { 
         "name": "Member $id", 
         "age": $age,
-        "transactions": [ ${transactions.mkString(",")} ]
+        "books": [ ${books.mkString(",")} ]
       } 
     """)
     pipeline flatMap (_(request))
   }
 
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-  def createTransaction(id: Int) = {
-    val genres = List("action", "horror", "fiction")
-    def randomGenre(): String = genres(rand.nextInt(genres.size))
+  def createBook(id: Int) = {
+    val authors = List("ranicki", "klein", "lessing")
+    def randomAuthor(): String = authors(rand.nextInt(authors.size))
     def randomDate(): String = {
       val cal = Calendar.getInstance()
       cal.set(Calendar.YEAR, 2014)
@@ -220,9 +221,9 @@ class MemberCreator(pipeline: Future[SendReceive]) extends Actor {
       dateFormat.format(cal.getTime)
     }
 
-    val genre = randomGenre()
+    val author = randomAuthor()
     val date = randomDate()
-    s"""{ "id": $id, "genre": "$genre", "date": "$date"}"""
+    s"""{ "id": $id, "author": "$author", "borrowedOn": "$date"}"""
   }
 
   def verifyResponseStatus(response: HttpResponse) = 
