@@ -306,11 +306,11 @@ img.center {
 	float: right;
 }
 
-#home ul {
+ul {
   list-style-type:none;
   padding-left: 10px;
 }
-#home ul li:before {
+ul li:before {
   content: '» ';
 }
 
