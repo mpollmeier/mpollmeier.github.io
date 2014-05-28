@@ -7,7 +7,7 @@ tags: [scala, fun]
 ---
 Warning: do not try this at work! ;)
 
-We were hosting a <a href="http://www.meetup.com/kiwi-code-retreat/events/115115072/">code retreat</a> at Movio yesterday, and one of the sessions had the constraint that none of your production methods may return anything. I checked with our facilitator <a href="https://twitter.com/rapaul">Richard</a> and he said that callbacks are allowed. 
+We were hosting a <a href="http://www.meetup.com/kiwi-code-retreat/events/115115072/">code retreat</a> at work yesterday, and one of the sessions had the constraint that none of your production methods may return anything. I checked with our facilitator <a href="https://twitter.com/rapaul">Richard</a> and he said that callbacks are allowed. 
 So <a href="https://twitter.com/talios">Mark</a> and I decided that each method that would normally return a value, would instead take call a callback function with that value. We would hand in that callback into the method. 
 So we built a callback lifter that we would hand a function, which return value we're interested in. It calls the function and returns the value provided in the callback. With this in place we can use any function as if it would return a value ;)
 

@@ -30,7 +30,7 @@ Scala 2.10 introduces TypeTag which brings us the compile-time information about
   println(B[List[String]].tpe == typeOf[List[Int]])    //false
 ```
 
-Another use case for the reflection API we just had at <a href="http://www.movio.co/">Movio</a> is to get all members of an object that are of a given type. We define a customer specific configuration in objects that drives our whole system - from the <a href="http://petstore.swagger.wordnik.com/">Swagger API documentation</a> all the way down to how we persist the data in <a href="http://cassandra.apache.org/">Cassandra</a> and do our filters. The code below grabs all members of an object that are subtypes of Field, gets their generic type T and checks if they mix in a given trait `Required`. Scala's runtime mirrors allow us to lookup the symbols and types for a given instance at runtime - pretty neat!
+Another use case for the reflection API we just had at work is to get all members of an object that are of a given type. We define a customer specific configuration in objects that drives our whole system - from the <a href="http://petstore.swagger.wordnik.com/">Swagger API documentation</a> all the way down to how we persist the data in <a href="http://cassandra.apache.org/">Cassandra</a> and do our filters. The code below grabs all members of an object that are subtypes of Field, gets their generic type T and checks if they mix in a given trait `Required`. Scala's runtime mirrors allow us to lookup the symbols and types for a given instance at runtime - pretty neat!
 
 ```scala
   import scala.reflect.runtime.universe._

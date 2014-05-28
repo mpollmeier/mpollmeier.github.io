@@ -17,7 +17,7 @@ Future.traverse(list)(doubleFuture) //returns Future[List[Int]]
 If we just <em>map</em> the list using our function, we get a list of Futures. More useful in this situation is to use <em>Future.traverse</em>, which essentially does the same but only returns a single Future. That one completes when all computations have been finished. 
 Please note that both statements return instantly and execute all futures in parallel (that's obviously a simplification as it depends on your Executor etc.). 
 
-Sometimes if you have a cool new tool, new problems arise. Maybe you don't want to execute everything in parallel every time? And maybe you want to stop the whole process if one of the computations failed? At <a href="http://www.movio.co">Movio</a> we had a couple of cases where we wanted to do exactly that: execute the futures one after the other, and stop if one fails. Obviously we did not want to use Await.result as that would block a precious thread. 
+Sometimes if you have a cool new tool, new problems arise. Maybe you don't want to execute everything in parallel every time? And maybe you want to stop the whole process if one of the computations failed? At work we had a couple of cases where we wanted to do exactly that: execute the futures one after the other, and stop if one fails. Obviously we did not want to use Await.result as that would block a precious thread. 
 The trick is to fold over the list and use a for comprehension (alternatively flatMap) inside the fold, so that we only compute the next value once the previous has completed:
 
 ```scala
