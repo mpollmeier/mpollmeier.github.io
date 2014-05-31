@@ -70,22 +70,19 @@ curl http://localhost:9200/members/member/_search?pretty=true -d '{
     "and": [
       { 
         "range": { 
-          "age": { "gte" : 20, "lt" : 30 } 
+          "age": { "gt" : 20, "lt" : 30 } 
         } 
       },
       { 
         "nested": {
           "path": "books",
           "query": {
-            "term": { "books.author": "ranicki" }
-          }
-        }
-      },
-      { 
-        "nested": {
-          "path": "books",
-          "query": {
-            "range": { "books.borrowedOn": { "gt" : "2014-04-18", "lt" : "2014-05-18" } }
+            "bool": {
+              "must": [
+                { "term": { "books.author": "ranicki" } },
+                { "range": { "books.borrowedOn": { "gt" : "2014-02-18", "lt" : "2014-05-18" } } }
+              ]
+            }
           }
         }
       }
@@ -95,7 +92,7 @@ curl http://localhost:9200/members/member/_search?pretty=true -d '{
 ```
 
 And the results come back in around than 100 milliseconds - with cold caches on my three year old laptop! Now that's damn fast! In this case there's about 95k members that hit the criteria. That being said it returns the count of total members and a couple of sample members (optionally the `highest scoring` ones). 
-This is the first time I've used Elasticsearch and it's love at first sight! Now let's see if we will actually use this at work... 
+This is the first time I've used Elasticsearch and it's love at first sight!
 
 Appendix: setup
 =======================
