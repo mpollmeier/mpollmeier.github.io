@@ -5,7 +5,7 @@ date: 2013-06-10 21:18:52.000000000 +02:00
 permalink: akka-work-pulling-pattern
 tags: [scala, akka, work-pulling-pattern, pattern]
 ---
-I just gave a talk about the Work Pulling Pattern at <a href="http://www.meetup.com/ny-scala/events/118373392/">NY-Scala</a> (<a href="/images/akka-WorkPullingPattern.pdf">slides</a>), so I figured it's a good time to update my previous article on the Work Pulling Pattern. It's based on Derek Wyatt's <a href="http://letitcrash.com/post/29044669086/balancing-workload-across-nodes-with-akka-2">blog post</a> who should get all credit for it - I've just picked it up and explain it in isolation. 
+I just gave a talk about the Work Pulling Pattern at <a href="http://www.meetup.com/ny-scala/events/118373392/">NY-Scala</a> (<a href="/resources/akka-WorkPullingPattern.pdf">slides</a>), so I figured it's a good time to update my previous article on the Work Pulling Pattern. It's based on Derek Wyatt's <a href="http://letitcrash.com/post/29044669086/balancing-workload-across-nodes-with-akka-2">blog post</a> who should get all credit for it - I've just picked it up and explain it in isolation. 
 
 This pattern ensures that your mailboxes don't overflow if creating work is fast than actually doing it - which can lead to out of memory errors when the mailboxes eventually become too full. It also let's you distribute work around your cluster, scale dynamically scale and is completely non-blocking. At work we use it in a number of places, and Victor Klang and Ronald Kuhn from the core Akka team told me that they use it aswell - that should be reason enough to have it in your toolbox. 
 
