@@ -2,6 +2,7 @@
 layout: post
 title: Super simple dependency injection in Scala
 date: 2014-06-29
+permalink: 2014/06/29/simple-dependency-injection-scala
 tags: [scala, di, dependency injection]
 ---
 
@@ -49,4 +50,6 @@ val client = new MyClient { override val service = MyOtherService }
 ```
 
 The idea is the same as e.g. in Spring: we instantiate a singleton object of MyService and 'inject' it into MyClient. And that's it. It's so simple, first I found it too straightforward to even blog about, but as more developers are joining the Scala ecosystem I think it's good to mention that there are alternatives to full blown DI frameworks. At work we've used this simple pattern all along and haven't looked back so far. 
+
+Update: strictly speaking this pattern is not actually dependency injection, because the dependences are not injected from the outside. However, we get most of the benefits without having to pay extra in complexity or boilerplatey code for it.
 
