@@ -1,4 +1,4 @@
-[0m[[0minfo[0m] [0mUpdating {file:/home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/}shapeless-scaladays...[0m
+[0m[[0minfo[0m] [0mUpdating {file:/home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/}root-2014-09-05-shapeless-scaladays...[0m
 [0m[[0mdebug[0m] [0m:: resolving dependencies :: shapeless-demo#shapeless-demo_2.11;1.0[0m
 [0m[[0mdebug[0m] [0m	confs: [compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool][0m
 [0m[[0mdebug[0m] [0m	validate = true[0m
@@ -7,20 +7,10 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for shapeless-demo#shapeless-demo_2.11;1.0 [compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-library;2.11.2 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.11.2 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@137028ba[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang/scala-library/2.11.2/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for org.scala-lang#scala-library;2.11.2[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for org.scala-lang#scala-library;2.11.2[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.pom (2.11.2)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-library;2.11.2!scala-library.pom(pom.original) (858ms)[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang/scala-library/2.11.2/jars/scala-library.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.jar[0m
-[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.11.2 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@6c23e137[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-library;2.11.2[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.11.2 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.11.2] org.scala-lang#scala-library;2.11.2[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-library;2.11.2 [compile->runtime][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-library;2.11.2 [compile->compile][0m
@@ -28,19 +18,9 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->com.chuusai#shapeless_2.11;2.0.0 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving com.chuusai#shapeless_2.11;2.0.0 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: com.chuusai#shapeless_2.11;2.0.0 {compile=[default(compile)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/com.chuusai/shapeless_2.11/2.0.0/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for com.chuusai#shapeless_2.11;2.0.0[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for com.chuusai#shapeless_2.11;2.0.0[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.pom (2.0.0)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] com.chuusai#shapeless_2.11;2.0.0!shapeless_2.11.pom(pom.original) (806ms)[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/com.chuusai/shapeless_2.11/2.0.0/bundles/shapeless_2.11.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.jar[0m
-[0m[[0mdebug[0m] [0m	found com.chuusai#shapeless_2.11;2.0.0 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: com.chuusai#shapeless_2.11;2.0.0[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: com.chuusai#shapeless_2.11;2.0.0[0m
+[0m[[0mdebug[0m] [0m	found com.chuusai#shapeless_2.11;2.0.0 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->com.chuusai#shapeless_2.11;2.0.0 [compile->runtime][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->com.chuusai#shapeless_2.11;2.0.0 [compile->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.chuusai#shapeless_2.11;2.0.0->org.scala-lang#scala-library;2.11.0 [compile->master(*)][0m
@@ -167,19 +147,9 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-compiler;2.11.2 [scala-tool->default][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-compiler;2.11.2 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.scala-lang#scala-compiler;2.11.2 {scala-tool=[default, optional(default)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang/scala-compiler/2.11.2/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for org.scala-lang#scala-compiler;2.11.2[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for org.scala-lang#scala-compiler;2.11.2[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.pom (2.11.2)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-compiler;2.11.2!scala-compiler.pom(pom.original) (820ms)[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang/scala-compiler/2.11.2/jars/scala-compiler.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.jar[0m
-[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-compiler;2.11.2 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-compiler;2.11.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-compiler;2.11.2[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-compiler;2.11.2 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-compiler;2.11.2 [scala-tool->runtime][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-compiler;2.11.2 [scala-tool->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-compiler;2.11.2->org.scala-lang#scala-library;2.11.2 [compile->master(*)][0m
@@ -192,19 +162,9 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-compiler;2.11.2->org.scala-lang#scala-reflect;2.11.2 [compile->master(*)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-reflect;2.11.2 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.scala-lang#scala-reflect;2.11.2 {compile=[compile(*), master(*)], runtime=[runtime(*)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang/scala-reflect/2.11.2/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for org.scala-lang#scala-reflect;2.11.2[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for org.scala-lang#scala-reflect;2.11.2[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.pom (2.11.2)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-reflect;2.11.2!scala-reflect.pom(pom.original) (772ms)[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang/scala-reflect/2.11.2/jars/scala-reflect.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.jar[0m
-[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-reflect;2.11.2 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-reflect;2.11.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-reflect;2.11.2[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-reflect;2.11.2 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.11.2] org.scala-lang#scala-reflect;2.11.2[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-compiler;2.11.2->org.scala-lang#scala-reflect;2.11.2 [compile->compile(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-reflect;2.11.2->org.scala-lang#scala-library;2.11.2 [compile->master(*)][0m
@@ -232,19 +192,9 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-compiler;2.11.2->org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2 [compile->master(*)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2 {compile=[compile(*), master(*)], runtime=[runtime(*)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang.modules/scala-parser-combinators_2.11/1.0.2/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.pom (1.0.2)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2!scala-parser-combinators_2.11.pom(pom.original) (753ms)[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/org.scala-lang.modules/scala-parser-combinators_2.11/1.0.2/bundles/scala-parser-combinators_2.11.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.jar[0m
-[0m[[0mdebug[0m] [0m	found org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-compiler;2.11.2->org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2 [compile->compile(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2->org.scala-lang#scala-library;2.11.1 [compile->master(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2->org.scala-lang#scala-library;2.11.2 [compile->master(*)][0m
@@ -268,23 +218,9 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-compiler;2.11.2->jline#jline;2.12 [optional->master(*)][0m
 [0m[[0minfo[0m] [0mResolving jline#jline;2.12 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: jline#jline;2.12 {optional=[compile(*), master(*)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/jline/jline/2.12/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for jline#jline;2.12[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for jline#jline;2.12[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.pom (2.12)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] jline#jline;2.12!jline.pom(pom.original) (777ms)[0m
-[0m[[0minfo[0m] [0mResolving org.sonatype.oss#oss-parent;7 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.sonatype.oss#oss-parent;7 {}[0m
-[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.sonatype.oss#oss-parent;7[0m
-[0m[[0mdebug[0m] [0m	local: revision in cache: org.sonatype.oss#oss-parent;7[0m
-[0m[[0mdebug[0m] [0m		tried /home/michaelp/.ivy2/local/jline/jline/2.12/jars/jline.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.jar[0m
-[0m[[0mdebug[0m] [0m	found jline#jline;2.12 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: jline#jline;2.12[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: jline#jline;2.12[0m
+[0m[[0mdebug[0m] [0m	found jline#jline;2.12 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies org.scala-lang#scala-compiler;2.11.2->jline#jline;2.12 [optional->compile(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-library;2.11.2 [scala-tool->default][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-library;2.11.2 [scala-tool->runtime][0m
@@ -293,56 +229,26 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies shapeless-demo#shapeless-demo_2.11;1.0->org.scala-lang#scala-library;2.11.2 [scala-tool->optional(default)][0m
 [0m[[0mdebug[0m] [0m	resolved ivy file produced in cache[0m
 [0m[[0mdebug[0m] [0m:: downloading artifacts ::[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.2/scala-library-2.11.2.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-library;2.11.2!scala-library.jar (3312ms)[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/com/chuusai/shapeless_2.11/2.0.0/shapeless_2.11-2.0.0.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] com.chuusai#shapeless_2.11;2.0.0!shapeless_2.11.jar(bundle) (5162ms)[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.2/scala-compiler-2.11.2.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-compiler;2.11.2!scala-compiler.jar (7691ms)[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-reflect;2.11.2!scala-reflect.jar (4884ms)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-library;2.11.2!scala-library.jar[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.chuusai#shapeless_2.11;2.0.0!shapeless_2.11.jar(bundle)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-compiler;2.11.2!scala-compiler.jar[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-reflect;2.11.2!scala-reflect.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang.modules#scala-xml_2.11;1.0.2!scala-xml_2.11.jar(bundle)[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.2/scala-parser-combinators_2.11-1.0.2.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2!scala-parser-combinators_2.11.jar(bundle) (1334ms)[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/jline/jline/2.12/jline-2.12.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] jline#jline;2.12!jline.jar (957ms)[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 7990ms :: artifacts dl 23350ms[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 compile produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-compile.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 runtime produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-runtime.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 test produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-test.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 provided produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-provided.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 optional produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-optional.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 compile-internal produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-compile-internal.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 runtime-internal produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-runtime-internal.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 test-internal produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-test-internal.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 plugin produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-plugin.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 sources produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-sources.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 docs produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-docs.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 pom produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-pom.xml[0m
-[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 scala-tool produced in /home/michaelp/SparkleShare/KnowHow/Scala/presentations/shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-scala-tool.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (7990ms resolve - 23350ms download)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.2!scala-parser-combinators_2.11.jar(bundle)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] jline#jline;2.12!jline.jar[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 333ms :: artifacts dl 15ms[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 compile produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-compile.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 runtime produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-runtime.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 test produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-test.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 provided produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-provided.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 optional produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-optional.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 compile-internal produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-compile-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 runtime-internal produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-runtime-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 test-internal produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-test-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 plugin produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-plugin.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 sources produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-sources.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 docs produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-docs.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 pom produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-pom.xml[0m
+[0m[[0mdebug[0m] [0m	report for shapeless-demo#shapeless-demo_2.11;1.0 scala-tool produced in /home/mp/Projects/develblog/slides/2014-09-05-shapeless-scaladays/target/resolution-cache/reports/shapeless-demo-shapeless-demo_2.11-scala-tool.xml[0m
+[0m[[0mdebug[0m] [0m	resolve done (333ms resolve - 15ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m

@@ -58,7 +58,8 @@
         <section>
           <section data-markdown>
             <script type="text/template">
-              ###dynamic vs. static languages
+              ### detour: 
+              ### dynamic vs. static languages
             </script>
           </section>
 
@@ -87,27 +88,28 @@
               ```
             </script>
           </section>
-				</section>
 
-				<section>
           <section data-markdown>
             <script type="text/template">
-              ### Scala's Lists are homogeneous
-              ```scala
-              val list = 42 :: 43 :: Nil
-              list.head
-              ```
+              ### safety: types at compile time
+              ### price: more effort to write
+            </script>
+          </section>
+				</section>
 
-              ```scala
-              val list = 42 :: "foo" :: Nil
-              list.head
-              ```
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              ### back on track
             </script>
           </section>
 
           <section data-markdown>
             <script type="text/template">
               ### Scala's Lists are homogeneous
+              * demo
+            </script>
+            <!--
               ```scala
               val list = 42 :: 43 :: Nil //List[Int]
               list.head //Int
@@ -117,47 +119,44 @@
               val list = 42 :: "foo" :: Nil //List[Any]
               list.head //Any
               ```
-            </script>
+            -->
           </section>
-				</section>
-
-				<section data-markdown>
-          <script type="text/template">
-            ### Scala's type system
-            * touring complete
-            * peano numbers
-          </script>
-				</section>
+        </section>
 
 				<section>
           <section data-markdown>
             <script type="text/template">
+              ### Scala's type system
+              * touring complete
+              * peano numbers
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
               ### shapeless
               * explores the limits of Scala's type system
-              * close to Scalaz
-              * many cool libraries use it
               * has some easy to use concepts
+              * and some not so easy to understand concepts
               * https://github.com/milessabin/shapeless
             </script>
           </section>
 
           <section data-markdown>
             <script type="text/template">
-              ### Heterogenious lists: HList 
+              ### HList: heterogenious list
+              * demo
+              * prepend, append, concatenate, reverse
+              * take, drop, split, toList, tupled
+            </script>
+            <!--
               ```scala
                 import shapeless._
                 val list = 42 :: "foo" :: HNil
                 :t list        //Int :: String :: HNil
                 list.head      //Int = 42
               ```
-            </script>
-          </section>
-
-          <section data-markdown>
-            <script type="text/template">
-              ### HList demo
-              prepend, append, concatenate, reverse, take, drop, split, toList, tupled
-            </script>
+            -->
           </section>
         </section>
 
@@ -172,60 +171,68 @@
         <section>
           <section data-markdown>
             <script type="text/template">
-              ### Graph DB: Vertices, Edges
-              * library to traverse graph
-              * output: paths of traversals
-              <img src="graph-example.png" height="550px"/>
+              ### Use case for shapeless
+              * Graph: Vertices, Edges
+              * existing library to traverse graph
+              * output: paths of all traversals
+
+              <img src="graph-example.png" height="500px"/>
             </script>
           </section>
 
           <section data-markdown>
             <script type="text/template">
-              ### some existing library
+              ### existing library
 
               ```scala
               val pipeline = graph.vertex(1)
-              pipeline.path 
-              // List(
-              //   v1 :: Nil
-              // )
+              pipeline.paths 
+
+              //returns at runtime:
+              List(
+                v1 :: Nil
+              )
               // type: List[List[Vertex]]
               ```
-              <img src="graph-example-v1.png" height="430px"/>
+              <img src="graph-example-v1.png" height="360px"/>
             </script>
           </section>
 
           <section data-markdown>
             <script type="text/template">
-              ### some existing library
+              ### existing library
 
               ```scala
-              val pipeline = graph.vertex(1).outEdge
-              pipeline.path
-              // List(
-              //   v1 :: e1 :: Nil,
-              //   v1 :: e2 :: Nil
-              // )
+              val pipeline = graph.vertex(1).outEdges
+              pipeline.paths
+
+              //returns at runtime:
+              List(
+                v1 :: e1 :: Nil,
+                v1 :: e2 :: Nil
+              )
               // type: List[List[Any]]
               ```
-              <img src="graph-example-v1-oute.png" height="430px"/>
+              <img src="graph-example-v1-oute.png" height="360px"/>
             </script>
           </section>
 
           <section data-markdown>
             <script type="text/template">
-              ### some existing library
+              ### existing library
 
               ```scala
-              val pipeline = graph.vertex(1).outEdge.inVertex
-              pipeline.path 
-              // List(
-              //   v1 :: e1 :: v2 :: Nil,
-              //   v1 :: e2 :: v3 :: Nil
-              // )
+              val pipeline = graph.vertex(1).outEdges.inVertices
+              pipeline.paths 
+
+              //returns at runtime:
+              List(
+                v1 :: e1 :: v2 :: Nil,
+                v1 :: e2 :: v3 :: Nil
+              )
               // type: List[List[Any]]
               ```
-              <img src="graph-example-v1-oute-inv.png" height="430px"/>
+              <img src="graph-example-v1-oute-inv.png" height="360px"/>
             </script>
           </section>
 
@@ -234,36 +241,77 @@
               ### graph library with HList
 
               ```scala
-              val pipeline = graph.vertex(1).outEdge.inVertex
-              pipeline.path 
-              // List(
-              //   v1 :: e1 :: v2 :: HNil,
-              //   v1 :: e2 :: v3 :: HNil
-              // )
+              val pipeline = graph.vertex(1).outEdges.inVertices
+              pipeline.paths 
+
+              //returns at runtime:
+              List(
+                v1 :: e1 :: v2 :: HNil,
+                v1 :: e2 :: v3 :: HNil
+              )
               // type: List[Vertex :: Edge :: Vertex :: HNil]
               ```
-              <img src="graph-example-v1-oute-inv.png" height="430px"/>
+              <img src="graph-example-v1-oute-inv.png" height="360px"/>
             </script>
           </section>
 
           <section data-markdown>
             <script type="text/template">
-              ### type level implementation 
+              ### implementation #1
+              * value level: just wrap the existing library
+
+              ```scala
+              class Pipeline(otherLibrary: OtherLibrary) {
+                def vertex(id: Int) = otherLibrary.vertex(id)
+                def outEdges = otherLibrary.outEdges
+                def inVertices = otherLibrary.inVertices
+              }                   
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### implementation #2
+              * type level: append to HList type on every step
 
               ```scala
               class Pipeline[Types <: HList] {
                 def vertex(id: Int) = new Pipeline[Vertex :: HNil]
-                def outEdge = new Pipeline[Types :+ Edge]
-                def inVertex = new Pipeline[Types :+ Vertex]
+                def outEdges = new Pipeline[Types :+ Edge]
+                def inVertices = new Pipeline[Types :+ Vertex]
               }                   
               graph.vertex(1) 
               //Pipeline[Vertex :: HNil]
 
-              graph.vertex(1).outEdge 
+              graph.vertex(1).outEdges 
               //Pipeline[Vertex :: Edge :: HNil]
 
-              graph.vertex(1).outEdge.inVertex 
+              graph.vertex(1).outEdges.inVertices 
               //Pipeline[Vertex :: Edge :: Vertex :: HNil]
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### implementation #3
+              * pulling everything together
+
+              ```scala
+              class Pipeline[Types <: HList](otherLibrary: OtherLibrary) {
+                def vertex(id: Int) = new Pipeline[Vertex :: HNil](
+                  otherLibrary.vertex(id)
+                )
+
+                def outEdges = new Pipeline[Types :+ Edge](
+                  otherLibrary.outEdges
+                )
+
+                def inVertices = new Pipeline[Types :+ Vertex](
+                  otherLibrary.inVertices
+                )
+              }                   
               ```
             </script>
           </section>
@@ -272,6 +320,8 @@
             <script type="text/template">
               ![Gremlin-Scala](gremlin-scala.png)
               https://github.com/mpollmeier/gremlin-scala
+
+              tinkerpop3 branch
             </script>
           </section>
         </section>
@@ -280,6 +330,7 @@
           <script type="text/template">
             ### Questions?
             ![Questions?](cat-question.jpg)
+            http://www.michaelpollmeier.com
           </script>
 				</section>
 
