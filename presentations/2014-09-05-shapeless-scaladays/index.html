@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>shapeless</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Michael Pollmeier">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/movio.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+    <style TYPE="text/css">
+     <!-- 
+     .reveal pre code {
+       font-size: 1.1em;
+       padding: 20px;
+       line-height: 1.3em;
+     }
+     -->
+    </style>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+        <section data-markdown>
+          <script type="text/template">
+            # building a cool library with shapeless
+          </script>
+				</section>
+
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              ###dynamic vs. static languages
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### Python (dynamically typed)
+
+              ```python
+              def divide(a, b): return a / b
+
+              divide(6, 2)
+              divide(6, "two")
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### Scala (statically typed)
+
+              ```scala
+              def divide(a: Float, b: Float) = a / b
+
+              divide(6, 2)
+              divide(6, "two")
+              ```
+            </script>
+          </section>
+				</section>
+
+				<section>
+          <section data-markdown>
+            <script type="text/template">
+              ### Scala's Lists are homogeneous
+              ```scala
+              val list = 42 :: 43 :: Nil
+              list.head
+              ```
+
+              ```scala
+              val list = 42 :: "foo" :: Nil
+              list.head
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### Scala's Lists are homogeneous
+              ```scala
+              val list = 42 :: 43 :: Nil //List[Int]
+              list.head //Int
+              ```
+
+              ```scala
+              val list = 42 :: "foo" :: Nil //List[Any]
+              list.head //Any
+              ```
+            </script>
+          </section>
+				</section>
+
+				<section data-markdown>
+          <script type="text/template">
+            ### Scala's type system
+            * touring complete
+            * peano numbers
+          </script>
+				</section>
+
+				<section>
+          <section data-markdown>
+            <script type="text/template">
+              ### shapeless
+              * explores the limits of Scala's type system
+              * close to Scalaz
+              * many cool libraries use it
+              * has some easy to use concepts
+              * https://github.com/milessabin/shapeless
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### Heterogenious lists: HList 
+              ```scala
+                import shapeless._
+                val list = 42 :: "foo" :: HNil
+                :t list        //Int :: String :: HNil
+                list.head      //Int = 42
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### HList demo
+              prepend, append, concatenate, reverse, take, drop, split, toList, tupled
+            </script>
+          </section>
+        </section>
+
+				<section data-markdown>
+          <script type="text/template">
+            ### how's that useful?
+
+            ![Learn](cat-smart.gif)
+          </script>
+				</section>
+
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              ### Graph DB: Vertices, Edges
+              * library to traverse graph
+              * output: paths of traversals
+              <img src="graph-example.png" height="550px"/>
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### some existing library
+
+              ```scala
+              val pipeline = graph.vertex(1)
+              pipeline.path 
+              // List(
+              //   v1 :: Nil
+              // )
+              // type: List[List[Vertex]]
+              ```
+              <img src="graph-example-v1.png" height="430px"/>
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### some existing library
+
+              ```scala
+              val pipeline = graph.vertex(1).outEdge
+              pipeline.path
+              // List(
+              //   v1 :: e1 :: Nil,
+              //   v1 :: e2 :: Nil
+              // )
+              // type: List[List[Any]]
+              ```
+              <img src="graph-example-v1-oute.png" height="430px"/>
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### some existing library
+
+              ```scala
+              val pipeline = graph.vertex(1).outEdge.inVertex
+              pipeline.path 
+              // List(
+              //   v1 :: e1 :: v2 :: Nil,
+              //   v1 :: e2 :: v3 :: Nil
+              // )
+              // type: List[List[Any]]
+              ```
+              <img src="graph-example-v1-oute-inv.png" height="430px"/>
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### graph library with HList
+
+              ```scala
+              val pipeline = graph.vertex(1).outEdge.inVertex
+              pipeline.path 
+              // List(
+              //   v1 :: e1 :: v2 :: HNil,
+              //   v1 :: e2 :: v3 :: HNil
+              // )
+              // type: List[Vertex :: Edge :: Vertex :: HNil]
+              ```
+              <img src="graph-example-v1-oute-inv.png" height="430px"/>
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### type level implementation 
+
+              ```scala
+              class Pipeline[Types <: HList] {
+                def vertex(id: Int) = new Pipeline[Vertex :: HNil]
+                def outEdge = new Pipeline[Types :+ Edge]
+                def inVertex = new Pipeline[Types :+ Vertex]
+              }                   
+              graph.vertex(1) 
+              //Pipeline[Vertex :: HNil]
+
+              graph.vertex(1).outEdge 
+              //Pipeline[Vertex :: Edge :: HNil]
+
+              graph.vertex(1).outEdge.inVertex 
+              //Pipeline[Vertex :: Edge :: Vertex :: HNil]
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ![Gremlin-Scala](gremlin-scala.png)
+              https://github.com/mpollmeier/gremlin-scala
+            </script>
+          </section>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ### Questions?
+            ![Questions?](cat-question.jpg)
+          </script>
+				</section>
+
+			</div>
+
+		</div>
+
+		<div class="footer" style="position: absolute; bottom: 30px; left: 25px;">
+      <a href="http://scaladownunder.org" target=_blank>#ScalaDU</a>
+    </div>
+    <div class="footer" style="position: absolute; bottom: 30px; right: 160px;">
+      <a href="https://twitter.com/pollmeier" target=_blank>@pollmeier</a>
+    </div>
+
+		<img src="images/scala-logo.png" style="position: absolute; top: 20px; left: 20px;" border="0" />
+		<img src="images/movio-logos.png" style="position: absolute; top: 20px; right: 20px;" border="0" />
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
