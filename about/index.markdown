@@ -4,7 +4,7 @@ title: About me
 ---
 
 <div id="about">
-  <h1>About me, Michael Pollmeier</h1>
+  <h1>Michael Pollmeier</h1>
 
   <ul>
     <li> I live in Auckland, New Zealand - a beautiful place in the southern pacific</li>
