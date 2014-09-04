@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Slick</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Michael Pollmeier">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/movio.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+    <style TYPE="text/css">
+     <!-- 
+     .reveal pre code {
+       font-size: 1.1em;
+       padding: 25px;
+       line-height: 1.4em;
+     }
+     -->
+    </style>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+        <section data-markdown>
+          <script type="text/template">
+            # Slick
+            http://slick.typesafe.com
+          </script>
+				</section>
+
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              ### Database access on the JVM
+              * JDBC
+              * ORM
+              * Slick etc.
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### JDBC
+              ```scala
+              val statement = connection.createStatement
+              val resultSet = statement.executeQuery("SELECT a,b,c,d FROM person")
+              while (resultSet.next) {
+                Coffee(
+                  a = resultSet.getString("a") 
+                  b = resultSet.getInt("b") 
+                  c = resultSet.getLong("c") 
+                  d = resultSet.getString("d") 
+                )
+              }
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### ORMs: Hibernate, JPA
+              
+              * bride the gap between objects and tables
+              * lazy loading: e.g. `person.getCards`
+              * complex: caches, proxy objects
+              * inflexible
+              * performance
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### Slick
+              * object model and plain sql
+              * only interacts with the DB when you want
+              * typesafe queries
+              * most popular in Scala world
+              * like querying standard Scala collections
+              * easy to debug
+            </script>
+          </section>
+				</section>
+                                                                                      
+				<section>
+          <section data-markdown>
+            <script type="text/template">
+              # Slick basics
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### Mapping a table
+              ```scala
+              case class Person(id: Long, name: String, shoesize: Option[Int])
+
+              class People(tag: Tag) extends Table[Person](tag, "PERSON") {
+                def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
+                def name = column[String]("NAME")
+                def shoesize = column[Option[Int]]("SHOESIZE")
+                def * = (id, name, shoesize) <> 
+                  ((Person.apply _).tupled, Person.unapply)
+              }
+
+              val people = TableQuery[People]
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###people += 
+              ###Person(-1, "Michael", Some(44))
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###people.list
+              * Seq[Person]
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###people.first
+              * Person
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###people.firstOption
+              * Option[Person]
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###.drop(10).take(5)
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###.sortBy(_.name.desc)
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###.filter(_.id === 42)
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###.filter(_.id inSet Set(1, 2, 3))
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###.length
+              * Int
+            </script>
+          </section>
+				</section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ### Debugging queries
+            * query.selectStatement
+            * query.insertStatement
+            * query.deleteStatement
+            * query.updateStatement
+          </script>
+        </section>
+
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              ### querying multiple tables
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ```scala
+              case class Person(id: Long, name: String, 
+                shoesize: Option[Int], addressId)
+
+              class People(tag: Tag) extends Table[Person](tag, "PERSON") {
+                def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
+                def name = column[String]("NAME")
+                def shoesize = column[Option[Int]]("SHOESIZE")
+                def addressId = column[Int]("ADDRESS_ID")
+                def * = (id, name, shoesize, addressId) <> 
+                  ((Person.apply _).tupled, Person.unapply)
+              }
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### joining people and addresses
+              ```scala
+              for {
+                person ← people
+                a ← addresses if p.addressId === a.id
+              } yield (person, a.street, a.postCode)
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### implicit joins
+              ```scala
+              // in class People:
+              def address = foreignKey("ADDRESS",addressId,addresses)(_.id)
+
+              for {
+                person ← people
+                a ← person.address
+              } yield (person, a.street, a.postCode)
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### 1 - n relationships
+              * one person - multiple addresses
+              * object/relational mismatch
+            </script>
+          </section>
+				</section>
+
+				<section>
+          <section data-markdown>
+            <script type="text/template">
+              ### sessions
+              ```scala
+              class PersonsDao {
+                def findAll()(implicit session: Session) = persons.list
+              }
+
+              // inside PersonsEndpoint:
+              db.withSession { implicit session ⇒ 
+                personsDao.findAll()
+              }
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### sessions and futures
+              * careful when closing over session in future
+              * jdbc is blocking anyway
+              * we don't use Futures
+
+              ```scala
+              def findAll()(implicit session: Session) = 
+                Future { // DANGER, don't do this
+                  persons.list
+                }
+              ```
+            </script>
+          </section>
+				</section>
+
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              ### plain sql
+              * fallback
+                * object/relational mapping
+                * performance tuning
+              * easier to read for complex queries
+              * you have to redefine your types
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### plain sql: string interpolation
+              ```scala
+              val name = "Michael"
+              sql"select * from Person where name = $name".as[Person]
+              sqlu" delete from Person where name = $name"
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### plain sql: queries
+              ```scala
+              val query = Q.query[Long, String]("""
+                select name
+                from person
+                where id = ?
+                """)
+              query.list(42)
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### plain sql: truncate all tables
+              ```scala
+              val tables = Q.query[String, String]("""
+                select TABLE_NAME 
+                from INFORMATION_SCHEMA.TABLES 
+                where table_schema = ?""")
+
+              tables.list(schema) foreach { tableName ⇒
+                sqlu"truncate table `#$tableName`".execute()
+              }
+              ```
+            </script>
+          </section>
+				</section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ### Questions?
+            ![Questions?](cat-question.jpg)
+          </script>
+				</section>
+
+			</div>
+
+		</div>
+		<div class="footer" style="position: absolute; bottom: 30px; left: 25px;">
+      <a href="http://scaladownunder.org" target=_blank>#ScalaDU</a>
+    </div>
+    <div class="footer" style="position: absolute; bottom: 30px; right: 160px;">
+      <a href="https://twitter.com/pollmeier" target=_blank>@pollmeier</a>
+    </div>
+
+		<img src="images/scala-logo.png" style="position: absolute; top: 20px; left: 20px;" border="0" />
+		<img src="images/movio-logos.png" style="position: absolute; top: 20px; right: 20px;" border="0" />
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
