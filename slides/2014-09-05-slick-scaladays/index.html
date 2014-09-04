@@ -62,8 +62,8 @@
             <script type="text/template">
               ### Database access on the JVM
               * JDBC
-              * ORM
-              * Slick etc.
+              * ORM: Hibernate et al.
+              * Slick...
             </script>
           </section>
 
@@ -103,7 +103,7 @@
               * object model and plain sql
               * only interacts with the DB when you want
               * typesafe queries
-              * most popular in Scala world
+              * most popular db library in Scala ecosystem
               * like querying standard Scala collections
               * easy to debug
             </script>
@@ -133,6 +133,14 @@
 
               val people = TableQuery[People]
               ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ###people.ddl.create
+              * creates the table 
+              * incl. all foreign keys and indexes
             </script>
           </section>
 
@@ -215,26 +223,12 @@
 
           <section data-markdown>
             <script type="text/template">
-              ```scala
-              case class Person(id: Long, name: String, 
-                shoesize: Option[Int], addressId)
+              ### 1-1 relationships
 
-              class People(tag: Tag) extends Table[Person](tag, "PERSON") {
-                def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
-                def name = column[String]("NAME")
-                def shoesize = column[Option[Int]]("SHOESIZE")
-                def addressId = column[Int]("ADDRESS_ID")
-                def * = (id, name, shoesize, addressId) <> 
-                  ((Person.apply _).tupled, Person.unapply)
-              }
-              ```
-            </script>
-          </section>
-
-          <section data-markdown>
-            <script type="text/template">
-              ### joining people and addresses
               ```scala
+              // in class People:
+              def addressId = column[Int]("ADDRESS_ID")
+
               for {
                 person ← people
                 a ← addresses if p.addressId === a.id
@@ -245,9 +239,12 @@
 
           <section data-markdown>
             <script type="text/template">
-              ### implicit joins
+              ### 1-1 relationships
+              * implicit join
+
               ```scala
               // in class People:
+              def addressId = column[Int]("ADDRESS_ID")
               def address = foreignKey("ADDRESS",addressId,addresses)(_.id)
 
               for {
@@ -262,10 +259,32 @@
             <script type="text/template">
               ### 1 - n relationships
               * one person - multiple addresses
-              * object/relational mismatch
+
+              ```scala
+              for {
+                a ← addresses
+                p ← person if p.id === a.personId
+              } yield (a, p)
+              ```
             </script>
           </section>
-				</section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ### m - n relationships
+              * object/relational mismatch
+              * lookup table: `PersonAddress`
+
+              ```scala
+              for {
+                p  ← people
+                pa ← personAddresses if p.id === pa.person
+                a  ← addresses if a.id === pa.address
+              } yield (a, p)
+              ```
+            </script>
+          </section>
+        </section>
 
 				<section>
           <section data-markdown>
@@ -278,7 +297,7 @@
 
               // inside PersonsEndpoint:
               db.withSession { implicit session ⇒ 
-                personsDao.findAll()
+                personsDao.findAll
               }
               ```
             </script>
@@ -289,7 +308,6 @@
               ### sessions and futures
               * careful when closing over session in future
               * jdbc is blocking anyway
-              * we don't use Futures
 
               ```scala
               def findAll()(implicit session: Session) = 
@@ -328,26 +346,28 @@
             <script type="text/template">
               ### plain sql: queries
               ```scala
-              val query = Q.query[Long, String]("""
+              type Input = Long
+              type Output = String
+              val query = Q.query[Input, Output]("""
                 select name
                 from person
                 where id = ?
                 """)
-              query.list(42)
+              query.list(42) //List[String]
               ```
             </script>
           </section>
 
           <section data-markdown>
             <script type="text/template">
-              ### plain sql: truncate all tables
+              ### plain sql: example
               ```scala
               val tables = Q.query[String, String]("""
                 select TABLE_NAME 
                 from INFORMATION_SCHEMA.TABLES 
                 where table_schema = ?""")
 
-              tables.list(schema) foreach { tableName ⇒
+              tables.list("movio") foreach { tableName ⇒
                 sqlu"truncate table `#$tableName`".execute()
               }
               ```
