@@ -70,15 +70,19 @@
           <section data-markdown>
             <script type="text/template">
               ### JDBC
+
               ```scala
-              val statement = connection.createStatement
-              val resultSet = statement.executeQuery("SELECT a,b,c,d FROM person")
+              val jdbcTemplate = new NamedParameterJdbcTemplate(dataSource)
+              val paramSource = new MapSqlParameterSource
+              paramSource.addValue("name", name)
+              val resultSet = jdbcTemplate.queryForRowSet(
+                "SELECT * FROM person WHERE name = :name", paramSource)
+
               while (resultSet.next) {
-                Coffee(
-                  a = resultSet.getString("a") 
-                  b = resultSet.getInt("b") 
-                  c = resultSet.getLong("c") 
-                  d = resultSet.getString("d") 
+                Person(
+                  id = resultSet.getLong("id") 
+                  name = resultSet.getString("name") 
+                  shoesize = resultSet.getInt("shoesize") 
                 )
               }
               ```
@@ -147,7 +151,7 @@
           <section data-markdown>
             <script type="text/template">
               ###people += 
-              ###Person(-1, "Michael", Some(44))
+              ###Person(1, "Michael", Some(10))
             </script>
           </section>
 
@@ -230,9 +234,9 @@
               def addressId = column[Int]("ADDRESS_ID")
 
               for {
-                person ← people
+                p ← people
                 a ← addresses if p.addressId === a.id
-              } yield (person, a.street, a.postCode)
+              } yield (p, a.street, a.postCode)
               ```
             </script>
           </section>
@@ -248,9 +252,9 @@
               def address = foreignKey("ADDRESS",addressId,addresses)(_.id)
 
               for {
-                person ← people
-                a ← person.address
-              } yield (person, a.street, a.postCode)
+                p ← people
+                a ← p.address
+              } yield (p, a.street, a.postCode)
               ```
             </script>
           </section>
@@ -259,11 +263,12 @@
             <script type="text/template">
               ### 1 - n relationships
               * one person - multiple addresses
+              * Address table holds FK to person
 
               ```scala
               for {
                 a ← addresses
-                p ← person if p.id === a.personId
+                p ← person if a.personId === p.id
               } yield (a, p)
               ```
             </script>
@@ -272,14 +277,13 @@
           <section data-markdown>
             <script type="text/template">
               ### m - n relationships
-              * object/relational mismatch
               * lookup table: `PersonAddress`
 
               ```scala
               for {
                 p  ← people
                 pa ← personAddresses if p.id === pa.person
-                a  ← addresses if a.id === pa.address
+                a  ← addresses if pa.address === a.id
               } yield (a, p)
               ```
             </script>
