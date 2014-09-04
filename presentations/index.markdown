@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Presentation
+title: Presentations
 ---
 
 <div id="slides">
