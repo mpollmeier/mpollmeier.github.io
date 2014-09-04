@@ -93,11 +93,11 @@
             <script type="text/template">
               ### ORMs: Hibernate, JPA
               
-              * bride the gap between objects and tables
-              * lazy loading: e.g. `person.getCards`
+              * bridges the gap between objects and tables
               * complex: caches, proxy objects, persistence manager
+              * lazy loading: e.g. `person.getCards`
               * inflexible
-              * performance
+              * often poor performance
             </script>
           </section>
 
@@ -108,8 +108,6 @@
               * only interacts with the DB when you want
               * typesafe queries
               * most popular db library in Scala ecosystem
-              * like querying standard Scala collections
-              * easy to debug
             </script>
           </section>
 				</section>
@@ -215,6 +213,19 @@
             * query.insertStatement
             * query.deleteStatement
             * query.updateStatement
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ### Backends
+            * import the driver you want and Slick will generate the appropriate sql
+
+            ```scala
+            import scala.slick.driver.H2Driver.simple._
+            import scala.slick.driver.MySQLDriver.simple._
+            import scala.slick.driver.PostgresDriver.simple._
+            ```
           </script>
         </section>
 
@@ -327,11 +338,10 @@
           <section data-markdown>
             <script type="text/template">
               ### plain sql
-              * fallback
-                * object/relational mapping
-                * performance tuning
               * easier to read for complex queries
               * you have to redefine your types
+              * when object/relational mapping hurts
+              * performance tuning
             </script>
           </section>
 
