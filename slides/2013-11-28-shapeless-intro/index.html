@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Intro to shapeless</title>
+
+		<meta name="author" content="Michael Pollmeier">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-markdown>
+          <script type="text/template">
+            ## Intro to shapeless
+            [Michael Pollmeier](http://www.michaelpollmeier.com)
+          </script>
+				</section>
+
+				<section data-markdown>
+          <script type="text/template">
+            ##shapeless
+            - explores the limits of the type system
+            - many libraries already use it
+            - close to Scalaz
+          </script>
+				</section>
+
+				<section data-markdown>
+          <script type="text/template">
+            This sucks, no?
+            ```scala
+            val list = List(42, "foo")
+            list.head //Any
+            ```
+          </script>
+				</section>
+
+				<section>
+          <section data-markdown>
+            <script type="text/template">
+              HLists to the rescue
+              ```scala
+                import shapeless._
+                val list = 42 :: "foo" :: HNil
+                list.head      //Int = 42
+                list.tail.head //String = foo
+                list(1)        //String = foo
+                :t list        //Int :: String :: HNil
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              Standard list stuff (kind of)
+              ```scala
+                val list = 42 :: "foo" :: HNil
+                true :: list //true :: 42 :: foo :: HNil
+                list.reverse //foo :: 42 :: HNil
+                list.toList  //List[Any] = List(42, foo)
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              auto conversions from/to tuples
+              ```scala
+                import syntax.std.tuple._
+
+                (23, "foo", true).head //Int = 23
+                (23, "foo", true).tail //(String, Boolean) = (foo,true)
+                (23, "foo", true).take(2) //(Int, String) = (23,foo)
+
+                (23, "foo", true).split(1) 
+                //((Int,), (String, Boolean)) = ((23,),(foo,true))
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+            HList.map together with tuple conversion
+<!-- 
+import shapeless._, poly._, syntax.std.tuple._
+import shapeless._
+import poly._
+import syntax.std.tuple._
+-->
+              ```scala
+                object double extends (Int -> Int) (_*2)
+                (3, 4)     map double //(Int, Int) = (6,8)
+                (3, "foo") map double //doesn't compile
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              HList.map for polymorphic types
+     <!-- 
+     http://stackoverflow.com/questions/2339863/use-map-and-stuff-on-scala-tuples/2340008#2340008
+     https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-2.0.0#heterogenous-lists
+     -->
+              ```scala
+                object double extends Poly1 {
+                  implicit def caseInt     = at[Int](_*2)
+                  implicit def caseString  = at[String](s => s + s)
+                }
+
+                (3, 4)     map double //(Int, Int) = (6,8)
+                (3, "foo") map double //(Int, String) = (6, "foofoo")
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+            some more crazy things
+
+            ```scala
+            val list = 1 :: true :: "foo" :: 2.0 :: HNil
+            list.filter[Int] 
+            list.updatedElem(42)
+            list.updatedType[Boolean]("i used to be a boolean")
+            ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+            many more crazy things
+
+            - fold
+            - split
+            - transpose
+            - zip
+            </script>
+          </section>
+
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            Heterogeneous Maps
+            ```scala
+              class BiMapIS[K, V]
+              implicit val intToString = new BiMapIS[Int, String]
+              implicit val stringToInt = new BiMapIS[Boolean, Int]
+
+              val hm = HMap[BiMapIS](23 -> "foo", true -> 13)
+              val hm2 = HMap[BiMapIS](23 -> "foo", true -> "bar") // does not compile
+
+              hm.get(23)     //Option[String] = Some(foo)
+              hm.get(true)   //Option[Int] = Some(13)
+              hm.get(false)  //Option[Int] = None
+              hm.get("blub") //does not compile
+            ```
+          </script>
+        </section>
+
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              Casts on the JVM
+              ```scala
+              List("a").asInstanceOf[List[Int]] //List[Int] = List(a)
+              ```
+            </script>
+          </section>
+
+          <section data-markdown>
+            <script type="text/template">
+              Typesafe casts with shapeless
+              ```scala
+              import syntax.typeable._
+              List("a").cast[List[Int]]    //Option[List[Int]] = None
+              List("a").cast[List[String]] //Option[List[String]] = Some(List(a))
+              ```
+            </script>
+          </section>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ##Crazy stuff
+            - [type level selection sort](http://www.chuusai.com/2012/01/27/type-level-sorting-in-shapeless/)
+          </script>
+				</section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ![Questions?](cat_has_question.jpg)
+          </script>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
