@@ -22,6 +22,8 @@ class MyClient {
 }
 ```
 
+### The full story
+
 There are plenty of good reasons for <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency injection (DI)</a>, and there's different styles of doing it in Scala. A good overview can be found [here](https://di-in-scala.github.io/). However all styles have some overhead - so if you don't find one you like, I suggest to go crazy and go without DI. 
 
 Hang on, that sounds like blasphemy!? Great!
