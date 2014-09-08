@@ -3,7 +3,6 @@ layout: post
 title: Super simple dependency injection in Scala
 date: 2014-06-29
 permalink: 2014/06/29/simple-dependency-injection-scala
-redirect_from: 2014/06/29/simple-dependency-injection-scala-1
 tags: [scala, di, dependency injection]
 ---
 

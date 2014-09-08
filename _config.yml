@@ -8,5 +8,3 @@ pygments: true
 markdown: redcarpet
 exclude: ['Gemfile', 'Gemfile.lock']
 permalink: pretty
-gems: 
-  - jekyll-redirect-from
