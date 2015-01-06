@@ -12,7 +12,7 @@ Graph databases are fun - they are fundamentally simple as they only have vertic
 [Gremlin](https://github.com/tinkerpop/tinkerpop3) can be seen as the JDBC for graph databases - it allows you to define traversals and has drivers for a large number of graph dbs. The Tinkerpop team has been busy working on the next major version `tinkerpop3`, which is a complete rewrite based on Java 8. They have just released 3.0.0.M6 and are close to the first release candidate. 
 I am the maintainer of [Gremlin-Scala](https://github.com/mpollmeier/gremlin-scala), a Scala wrapper to make Gremlin easier to use from Scala. This post uses the latest Gremlin-Scala v3. 
 
-[Gremlin-Scala-Examples](https://github.com/mpollmeier/gremlin-scala-examples) it a collection of sample projects and recipies to get you started as quickly as possible. This article explains one of the recipies - [ShortestPath](https://github.com/mpollmeier/gremlin-scala-examples/blob/master/neo4j/src/main/scala/ShortestPath.scala) - in more detail.
+[Gremlin-Scala-Examples](https://github.com/mpollmeier/gremlin-scala-examples) it a collection of sample projects and recipies to get you started as quickly as possible. This article explains one of the recipies - [ShortestPath](https://github.com/mpollmeier/gremlin-scala-examples/blob/master/neo4j/src/test/scala/ShortestPathSpec.scala) - in more detail.
 
 I stole the scenario from my former colleague [Stefan Bleibinhaus](http://bleibinha.us/blog/2013/10/scala-and-graph-databases-with-gremlin-scala) who has done a great job explaining this for an earlier version of Gremlin-Scala (2.5): let's try and find the shortest path between Auckland and Cape Reinga in New Zealand. I live in Auckland and Cape Reinga is quite a popular tourist destination - it's the northernmost point and a very unique place.  
 
@@ -121,4 +121,4 @@ DescriptionAndDistance(Auckland -> Dargaville -> Kaikohe -> Dargaville -> Kaikoh
 shortest path: DescriptionAndDistance(Auckland -> Whangarei -> Kaikohe -> Kaitaia -> Cape Reinga,436)
 ```
 
-You can find the source code and everything to run it yourself [here](https://github.com/mpollmeier/gremlin-scala-examples/blob/master/neo4j/src/main/scala/ShortestPath.scala). 
+You can find the source code and everything to run it yourself [here](https://github.com/mpollmeier/gremlin-scala-examples/blob/master/neo4j/src/test/scala/ShortestPathSpec.scala). 
