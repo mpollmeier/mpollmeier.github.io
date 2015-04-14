@@ -71,3 +71,9 @@ val timeElapsed = System.currentTimeMillis - start
 timeElapsed should be >= (30l)
 doubled should be(List(20, 40))
 ```
+
+Questions
+=======================
+Q: Zoran Perosevic on 14/04: What is expected behavior in case of exceptions? Would the execution of subsequent futures stop if one throws an exception? 
+
+A: In this implementation it would stop the execution if one future fails. That's because of the nature of the for comprehension (which is using flatMap).
