@@ -63,3 +63,18 @@ I often saw the suggestion to add the elements into a TreeMap which orders them 
 
 Please bear in mind that I put all this together at home on my own, so if you find any mistakes please leave a comment or drop me a mail and I'm happy to update this entry - and give you all the credit, of course ;) 
 Again: the <a href="https://github.com/mpollmeier/Selection-Algorithms">code is on github</a> - all it takes is <em>mvn compile groovy:execute</em> to run it on your machine. 
+
+<h3>Comment from Sebastiano Vigna on 23/05/2015</h3>
+Just as a reference, on my hardware extracting 5 top elements out of 10M distinct integer objects...
+
+* Takes 586ms using a Java PriorityQueue and addAll.
+* Takes 400ms using a Java PriorityQueue, but creating it using the constructor based on a collection. Making a vector into a heap is O(n), whereas adding n elements is O(n log n), so by using addAll() you're wasting a log n factor. The constructor based on collections is there for that purpose. The time is then O(n + k log n), similarly to Guavas's solution.
+* Takes 360ms using fastutil's ObjectHeapPriorityQueue, which is a better implementation of a heap than java.util's (using the constructor based on collections).
+* Takes 200ms using Guava.
+* Takes 71ms using fastutil's IntHeapPriorityQueue, which doesn't use objects.
+
+In general, I think that primitive collections are unbeatable. But in any case you can gain a lot by using the O(n) heap construction. I guess that Guava's strategy implemented with primitive types would be faster than anything else. I hope this is useful information!
+
+Ciao, seba
+
+PS: If instead of 10M distinct integers I use random integers from a smaller range times decrease considerably, which I think is the reason for the difference in timings with your results.
