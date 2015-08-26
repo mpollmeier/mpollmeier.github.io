@@ -6,8 +6,6 @@ permalink: 2014/10/12/calling-java-8-functions-from-scala
 tags: [scala, java, interop]
 ---
 
-========================
-
 Java 8 made a step towards functional programming by providing it's own lambda syntax and a whole set of classes in the `java.util.function` package. I expect future versions of Scala to have a better interoperability with Java 8, but for now if you want to call Java 8 code that expects Java 8 functions you could use the following (non-complete) list of implicit conversions. You write a normal Scala function and they convert it to a Java 8 Function, Predicate, BiPredicate etc.. 
 
 I wrote them for [Gremlin-Scala](https://github.com/mpollmeier/gremlin-scala) and thought it might be worth sharing. I put these implicit conversions into the [package object](https://github.com/mpollmeier/gremlin-scala/blob/e091246e33a711316634c0b99d2b29aa526c284a/src/main/scala/com/tinkerpop/gremlin/package.scala).

@@ -6,8 +6,6 @@ permalink: 2014/06/29/simple-dependency-injection-scala
 tags: [scala, di, dependency injection]
 ---
 
-========================
-
 tl;dr: this simple pattern gives you 90% of the benefits of DI, without the overhead of DI:
 
 ```scala
