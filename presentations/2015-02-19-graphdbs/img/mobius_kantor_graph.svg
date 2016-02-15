@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg  version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="480" height="480" viewBox="0 0 480 480"
+	 overflow="visible" enable-background="new 0 0 480 480" xml:space="preserve">
+<polyline fill="none" stroke="#000000" stroke-width="2" points="466.678,146.107 466.678,333.894 278.891,333.894 278.891,146.107
+	"/>
+<polyline fill="none" stroke="#000000" stroke-width="2" points="13.32,333.894 13.32,146.107 201.107,146.107 201.107,333.894 "/>
+<polyline fill="none" stroke="#000000" stroke-width="2" points="146.106,13.322 333.893,13.322 333.893,201.109 146.106,201.109
+	"/>
+<polyline fill="none" stroke="#000000" stroke-width="2" points="333.893,466.679 146.105,466.679 146.105,278.892 333.893,278.892
+	"/>
+<polyline fill="none" stroke="#000000" stroke-width="2" points="146.105,466.679 13.321,333.894 146.105,201.108 278.891,333.894
+	"/>
+<polyline fill="none" stroke="#000000" stroke-width="2" points="333.891,13.322 466.676,146.107 333.891,278.893 201.107,146.107
+	"/>
+<polyline fill="none" stroke="#000000" stroke-width="2" points="13.321,146.107 146.105,13.322 278.891,146.107 146.105,278.892
+	"/>
+<polyline fill="none" stroke="#000000" stroke-width="2" points="466.678,333.894 333.893,466.679 201.107,333.894 333.893,201.109
+	"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="146.105" cy="13.322" r="10"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="466.676" cy="146.107" r="10"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="333.893" cy="466.679" r="10"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="13.321" cy="333.894" r="10"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="146.105" cy="278.892" r="10"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="201.107" cy="146.107" r="10"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="333.893" cy="201.109" r="10"/>
+<circle fill="#FF0000" stroke="#000000" stroke-width="2" cx="278.891" cy="333.894" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="333.891" cy="13.322" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="278.891" cy="146.107" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="13.321" cy="146.107" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="146.105" cy="201.108" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="146.105" cy="466.679" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="201.107" cy="333.894" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="466.678" cy="333.894" r="10"/>
+<circle fill="#0099FF" stroke="#000000" stroke-width="2" cx="333.891" cy="278.893" r="10"/>
+<rect fill="none" width="480" height="480"/>
+</svg>

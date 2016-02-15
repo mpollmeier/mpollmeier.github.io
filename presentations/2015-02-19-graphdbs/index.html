@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Gremlin-Scala for Tinkerpop3</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+    <style media="screen" type="text/css">
+      .reveal section img {
+        border: none;
+        box-shadow: none;
+      }
+    </style>
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section data-markdown>
+					<script type="text/template">
+            ## Gremlin-Scala
+            ### Apache Tinkerpop 3
+
+            Also: what is a graph db and why should I care?
+
+            [http://michaelpollmeier.com](http://michaelpollmeier.com)<br>
+            [https://github.com/mpollmeier/gremlin-scala](https://github.com/mpollmeier/gremlin-scala/)<br>
+
+<!-- The goal of this talk is to get your brains all graphed up by the simplicity and power of graphs, and demonstrate how you can access graph databases using Gremlin-Scala. Gremlin-Scala provides a type safe DSL to access a variety of graph databases including Neo4j, OrientDB and Titan. It is the official Scala wrapper for Apache Tinkerpop 3, which aims to be the SQL of the graph database world.  -->
+<!-- I will demonstrate that graph databases are much simpler and typically better suited to model real life scenarios than relational databases. In my opinion the main reason that's stopping us using graph databases more often is the tooling, and Gremlin-Scala is here to change that. It is designed for both OLTP and OLAP traversals, so it can be applied to a variety of use cases. Developers can already benefit from the graph model in small CRUD applications, which are typically a nice playing field for evaluating new technologies.  -->
+					</script>
+				</section>
+
+        <section>
+          <section data-markdown>
+            <script type="text/template">
+              ## graphs in the real world
+            </script>
+          </section>
+          <section>
+						<h3>Graph theory started in the 18th century</h3>
+            <img src="img/mobius_kantor_graph.svg" height="400px"/>
+            <ul>
+              <li>a set of vertices</li>
+              <li>a set of edges (links) between vertices</li>
+            </ul>
+					</section>
+          <section>
+						<h3>Graph in computer science</h3>
+						<img src="img/control_flow_graph.png" height="500px"/>
+						<p>compiler optimizations</p>
+						<p></p>
+					</section>
+					<section>
+						<h3>Graph in Web</h3>
+						<img src="img/web.png" height="500px"/>
+						<p>the WWW (hypertexts)</p>
+						<p></p>
+					</section>
+					<section>
+						<h3>Engineering</h3>
+						<img src="img/pipe_network.jpg" height="500px"/>
+						<p>pipe network analysis</p>
+					</section>
+					<section>
+						<h3>Electrical engineering</h3>
+						<img src="img/circuit_theory.svg" height="500px"/>
+						<p>circuit theory</p>
+						<p></p>
+					</section>
+					<section>
+						<h3>Linguistics</h3>
+						<img src="img/language_network.png" height="500px"/>
+						<p>language models</p>
+					</section>
+					<section>
+						<h3>Biology</h3>
+						<img src="img/genes_network.png" height="500px"/>
+						<p>gene interactions</p>
+					</section>
+					<section>
+						<h3>Social Networks</h3>
+						<img src="img/social_network.png" height="500px"/>
+					</section>
+        </section>
+
+        <section>
+				  <section data-markdown>
+					  <script type="text/template">
+              ## comparison to relational dbs
+            </script>
+          </section>
+
+          <section>
+            <h3>Relational model</h3>
+						<img src="img/rdbms-joins.png" height="500px"/>
+          </section>
+
+          <section>
+            <h3>Graph model</h3>
+						<img src="img/blackboard_pizza.png" height="500px"/>
+            <p>just as you would draw it</p>
+          </section>
+
+
+					<section>
+						<h3>RDB Join</h3>
+            <p>find pizzas liked by Nicola</p>
+						<ul>
+							<li>given a Person (Nicola)</li>
+							<li class="fragment" data-fragment-index="0">find Nicola (id=10) in <i>likes</i> table: O(log N)</li>
+							<li class="fragment" data-fragment-index="1">find 'Margherita' and 'Oro' in <i>Pizza</i> table: O(log N)</li>
+						</ul>
+            <div class="fragment" data-fragment-index="2">
+						<pre class="stretch"><code data-trim class="sql">
+SELECT pizza.name
+FROM
+ Person as person
+ JOIN Likes as likes ON person.id = likes.person
+ JOIN Pizza as pizza ON likes.pizza = pizza.id AND
+WHERE person.id = 10
+						</code></pre>
+            </div>
+					</section>
+					<section>
+						<h3>In GraphDB</h3>
+						<ul>
+							<li>given a Person (Nicola)</li>
+							<li class="fragment" data-fragment-index="0">follow all <i>likes</i> links: O(1)</li>
+						</ul>
+            <div class="fragment" data-fragment-index="1">
+              <pre class="stretch"><code data-trim class="scala">
+                graph.V(10).out("likes")
+              </code></pre>
+            </div>
+            <p>
+						  <img src="img/blackboard_pizza.png" height="300px"/>
+            </p>
+					</section>
+					<section>
+						<h3>And now:</h3>
+						<ul>
+							<li>Find a Pizza</li>
+							<li>which is liked by Nicola</li>
+							<li>(or one of his friends)</li>
+							<li>which has at least one ingredient</li>
+							<li>typical of Trentino</li>
+						</ul>
+					</section>
+					<section>
+						<h3>GraphDB traversal</h3>
+						<img src="img/traversal_pizza.png" height="500px"/>
+					</section>
+					<section>
+						<p>Gremlin-Scala</p>
+						<pre class="stretch"><code data-trim class="scala">
+                val nicola = graph.V.hasLabel("Person").has("name" -> "Nicola")
+                nicola.out("friendOf").out("likes").out("contains")
+						</code></pre>
+					</section>
+					<section>
+						<p>At least with SQL I know how to write it:</p>
+						<pre class="stretch"><code data-trim class="sql">
+SELECT pizza.name
+FROM
+ Person as person
+ JOIN Likes as likes ON person.id = likes.person
+ JOIN Pizza as pizza ON likes.pizza = pizza.id AND
+ JOIN Contains as contains ON pizzza.id = contains.pizza
+ JOIN Ingredient as ingredient ON contains.ingredient = ingredient.id
+ JOIN TypicalOf as typicalOf ON ingredient.id = typicalOf.ingredient
+ JOIN Region as region ON typicalOf.region = region.id
+WHERE person.name = "Nicola"
+AND region.name = 'taas'
+						</code></pre>
+					</section>
+
+          <section data-markdown>
+            <script type="text/template">
+              ## Summary JOINS / Traversal
+              * joins are complex and long winded
+              * indexes are O(log(n)) (vs near O(1))
+                * traversing cost is no more affected by database size
+              * joins are not safe - no one is stopping you from joining the wrong table
+            </script>
+          </section>
+
+        </section>
+
+				<section data-markdown>
+					<script type="text/template">
+						<img src="img/traversal_pizza.png" height="500px"/>
+
+            markdown example
+            section
+
+						```
+						<section data-markdown>
+						  ## Markdown support
+
+						  Write content using inline or external Markdown.
+						  Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
+						</section>
+						```
+					</script>
+				</section>
+
+				<section>
+					<section id="fragments">
+						<h3>Fragments</h3>
+						<p>Hit the next arrow...</p>
+						<p class="fragment">... to step through ...</p>
+						<p><span class="fragment">... a</span> <span class="fragment">fragmented</span> <span class="fragment">slide.</span></p>
+
+						<aside class="notes">
+							This slide has fragments which are also stepped through in the notes window.
+						</aside>
+					</section>
+					<section>
+						<h3>Fragment Styles</h3>
+						<p>There's different types of fragments, like:</p>
+						<p class="fragment grow">grow</p>
+						<p class="fragment shrink">shrink</p>
+						<p class="fragment fade-out">fade-out</p>
+						<p class="fragment current-visible">current-visible</p>
+						<p class="fragment highlight-red">highlight-red</p>
+						<p class="fragment highlight-blue">highlight-blue</p>
+					</section>
+				</section>
+
+				<section id="transitions">
+					<h3>Transition Styles</h3>
+					<p>
+						You can select from different transitions, like: <br>
+						<a href="?transition=none#/transitions">None</a> -
+						<a href="?transition=fade#/transitions">Fade</a> -
+						<a href="?transition=slide#/transitions">Slide</a> -
+						<a href="?transition=convex#/transitions">Convex</a> -
+						<a href="?transition=concave#/transitions">Concave</a> -
+						<a href="?transition=zoom#/transitions">Zoom</a>
+					</p>
+				</section>
+
+				<section id="themes">
+					<h3>Themes</h3>
+					<p>
+						reveal.js comes with a few themes built in: <br>
+						<!-- Hacks to swap themes after the page has loaded. Not flexible and only intended for the reveal.js demo deck. -->
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/black.css'); return false;">Black (default)</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/white.css'); return false;">White</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/league.css'); return false;">League</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/sky.css'); return false;">Sky</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/beige.css'); return false;">Beige</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/simple.css'); return false;">Simple</a> <br>
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/serif.css'); return false;">Serif</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/blood.css'); return false;">Blood</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/night.css'); return false;">Night</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/moon.css'); return false;">Moon</a> -
+						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/solarized.css'); return false;">Solarized</a>
+					</p>
+				</section>
+
+				<section>
+					<section data-background="#dddddd">
+						<h3>Slide Backgrounds</h3>
+						<p>
+							Set <code>data-background="#dddddd"</code> on a slide to change the background color. All CSS color formats are supported.
+						</p>
+						<a href="#" class="navigate-down">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
+						</a>
+					</section>
+					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png">
+						<h3>Image Backgrounds</h3>
+						<pre><code class="hljs">&lt;section data-background="image.png"&gt;</code></pre>
+					</section>
+					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png" data-background-repeat="repeat" data-background-size="100px">
+						<h3>Tiled Backgrounds</h3>
+						<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
+					</section>
+					<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-color="#000000">
+						<div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
+							<h3>Video Backgrounds</h3>
+							<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
+						</div>
+					</section>
+					<section data-background="http://i.giphy.com/90F8aUepslB84.gif">
+						<h3>... and GIFs!</h3>
+					</section>
+				</section>
+
+				<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+					<h3>Background Transitions</h3>
+					<p>
+						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
+					</p>
+					<pre><code class="hljs">Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
+				</section>
+
+				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
+					<h3>Background Transitions</h3>
+					<p>
+						You can override background transitions per-slide.
+					</p>
+					<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
+				</section>
+
+				<section>
+					<h3>Pretty Code</h3>
+					<pre><code class="hljs" data-trim contenteditable>
+function linkify( selector ) {
+  if( supports3DTransforms ) {
+
+    var nodes = document.querySelectorAll( selector );
+
+    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
+      var node = nodes[i];
+
+      if( !node.className ) {
+        node.className += ' roll';
+      }
+    }
+  }
+}
+					</code></pre>
+					<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+				</section>
+
+				<section>
+					<h3>Marvelous List</h3>
+					<ul>
+						<li>No order here</li>
+						<li>Or here</li>
+						<li>Or here</li>
+						<li>Or here</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Fantastic Ordered List</h3>
+					<ol>
+						<li>One is smaller than...</li>
+						<li>Two is smaller than...</li>
+						<li>Three!</li>
+					</ol>
+				</section>
+
+				<section>
+					<h3>Tabular Tables</h3>
+					<table>
+						<thead>
+							<tr>
+								<th>Item</th>
+								<th>Value</th>
+								<th>Quantity</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Apples</td>
+								<td>$1</td>
+								<td>7</td>
+							</tr>
+							<tr>
+								<td>Lemonade</td>
+								<td>$2</td>
+								<td>18</td>
+							</tr>
+							<tr>
+								<td>Bread</td>
+								<td>$3</td>
+								<td>2</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<section>
+					<h3>Clever Quotes</h3>
+					<p>
+						These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
+						&ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
+					</p>
+					<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
+						&ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
+						reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
+					</blockquote>
+				</section>
+
+				<section>
+					<h3>Intergalactic Interconnections</h3>
+					<p>
+						You can link between slides internally,
+						<a href="#/2/3">like this</a>.
+					</p>
+				</section>
+
+				<section>
+					<h3>Speaker View</h3>
+					<p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
+					<p>Press the <em>S</em> key to try it out.</p>
+
+					<aside class="notes">
+						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+					</aside>
+				</section>
+
+				<section>
+					<h3>Export to PDF</h3>
+					<p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, here's an example:</p>
+					<iframe src="https://www.slideshare.net/slideshow/embed_code/42840540" width="445" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:3px solid #666; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+				</section>
+
+				<section>
+					<h3>Global State</h3>
+					<p>
+						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
+						will be added as a class to the document element when the slide is open. This lets you
+						apply broader style changes, like switching the page background.
+					</p>
+				</section>
+
+				<section data-state="customevent">
+					<h3>State Events</h3>
+					<p>
+						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
+					</p>
+					<pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
+Reveal.addEventListener( 'customevent', function() {
+	console.log( '"customevent" has fired' );
+} );
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Take a Moment</h3>
+					<p>
+						Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want to take distracting slides off the screen.
+					</p>
+				</section>
+
+				<section>
+					<h3>Much more</h3>
+					<ul>
+						<li>Right-to-left support</li>
+						<li><a href="https://github.com/hakimel/reveal.js#api">Extensive JavaScript API</a></li>
+						<li><a href="https://github.com/hakimel/reveal.js#auto-sliding">Auto-progression</a></li>
+						<li><a href="https://github.com/hakimel/reveal.js#parallax-background">Parallax backgrounds</a></li>
+						<li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
+					</ul>
+				</section>
+
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<p>
+						- <a href="http://slides.com">Try the online editor</a> <br>
+						- <a href="https://github.com/hakimel/reveal.js">Source code &amp; documentation</a>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
