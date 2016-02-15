@@ -73,7 +73,7 @@
             <img src="img/mobius_kantor_graph.svg" height="400px"/>
             <ul>
               <li>a set of vertices</li>
-              <li>a set of edges (links) between vertices</li>
+              <li>a set of edges between vertices</li>
             </ul>
 					</section>
           <section>
@@ -133,10 +133,8 @@
             <p>just as you would draw it</p>
           </section>
 
-
 					<section>
-						<h3>RDB Join</h3>
-            <p>find pizzas liked by Nicola</p>
+						<h3>RDB: find pizzas liked by Nicola</h3>
 						<ul>
 							<li>given a Person (Nicola)</li>
 							<li class="fragment" data-fragment-index="0">find Nicola (id=10) in <i>likes</i> table: O(log N)</li>
@@ -154,10 +152,10 @@ WHERE person.id = 10
             </div>
 					</section>
 					<section>
-						<h3>In GraphDB</h3>
+						<h3>Gremlin: find pizzas liked by Nicola</h3>
 						<ul>
 							<li>given a Person (Nicola)</li>
-							<li class="fragment" data-fragment-index="0">follow all <i>likes</i> links: O(1)</li>
+							<li class="fragment" data-fragment-index="0">follow all <i>likes</i> edges: O(1)</li>
 						</ul>
             <div class="fragment" data-fragment-index="1">
               <pre class="stretch"><code data-trim class="scala">
@@ -168,58 +166,85 @@ WHERE person.id = 10
 						  <img src="img/blackboard_pizza.png" height="300px"/>
             </p>
 					</section>
-					<section>
-						<h3>And now:</h3>
-						<ul>
-							<li>Find a Pizza</li>
-							<li>which is liked by Nicola</li>
-							<li>(or one of his friends)</li>
-							<li>which has at least one ingredient</li>
-							<li>typical of Trentino</li>
-						</ul>
-					</section>
-					<section>
-						<h3>GraphDB traversal</h3>
-						<img src="img/traversal_pizza.png" height="500px"/>
-					</section>
-					<section>
-						<p>Gremlin-Scala</p>
-						<pre class="stretch"><code data-trim class="scala">
-                val nicola = graph.V.hasLabel("Person").has("name" -> "Nicola")
-                nicola.out("friendOf").out("likes").out("contains")
-						</code></pre>
-					</section>
-					<section>
-						<p>At least with SQL I know how to write it:</p>
-						<pre class="stretch"><code data-trim class="sql">
-SELECT pizza.name
-FROM
- Person as person
- JOIN Likes as likes ON person.id = likes.person
- JOIN Pizza as pizza ON likes.pizza = pizza.id AND
- JOIN Contains as contains ON pizzza.id = contains.pizza
- JOIN Ingredient as ingredient ON contains.ingredient = ingredient.id
- JOIN TypicalOf as typicalOf ON ingredient.id = typicalOf.ingredient
- JOIN Region as region ON typicalOf.region = region.id
-WHERE person.name = "Nicola"
-AND region.name = 'taas'
-						</code></pre>
-					</section>
 
           <section data-markdown>
             <script type="text/template">
-              ## Summary JOINS / Traversal
+              ## JOINS vs Traversal
               * joins are complex and long winded
-              * indexes are O(log(n)) (vs near O(1))
+              * joins (using indexes) are O(log(n))
+              * traversals are near O(1)
                 * traversing cost is no more affected by database size
               * joins are not safe - no one is stopping you from joining the wrong table
             </script>
           </section>
 
+          <section data-markdown>
+            <script type="text/template">
+              ## Summary
+              * Graph dbs have a simple model
+                * definition: index free adjacency
+              * Relational dbs are bad for relations
+              * Co-worker quote: <br/><i>I don't understand why graphs were not the first popular db model</i>
+            </script>
+          </section>
         </section>
+
+				<section>
+          <section>
+            <img src="img/tp3.png" height="500px"/>
+          </section>
+          <section>
+            <img src="img/tp3-graphdbs.png"/>
+          </section>
+          <section>
+            <img src="img/tp3-libs.png" />
+          </section>
+				</section>
+
+				<section>
+					<section>
+            <img src="img/tp3-gremlin-scala.png" />
+            <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a>
+    <!-- Scala friendly function signatures, aiming to be close to the Scala collection library. -->
+    <!--     use standard Scala functions - no need to worry about how to implement things like java.util.function.BiPredicate -->
+    <!-- Beautiful DSL to create vertices and edges -->
+    <!-- Type safe traversals -->
+    <!-- Minimal runtime overhead - only allocates additional instances if absolutely necessary -->
+    <!-- Nothing is hidden away, you can always easily access the underlying Gremlin-Java objects if needed, e.g. to access graph db specifics things like indexes -->
+
+					</section>
+					<section>
+						<h3>Create vertices and edges</h3>
+            <pre class="stretch"><code data-trim class="scala">
+import gremlin.scala._
+import org.apache.tinkerpop.gremlin.tinkergraph.structure._
+
+val graph = TinkerGraph.open.asScala
+
+val Founded = Key[String]("founded")
+val Distance = Key[Int]("distance")
+            </code></pre>
+            <div class="fragment" data-fragment-index="1">
+              <pre class="stretch"><code data-trim class="scala">
+val paris = graph + "Paris"
+val london = graph + ("London", Founded → "43 AD")
+
+paris --- "OneWayRoad" --> london
+paris <-- "OtherWayAround" --- london
+paris <-- "Eurostar" --> london
+
+paris --- ("Eurostar", Distance → 495) --> london
+
+paris.out("Eurostar").value(Founded).head //43 AD
+paris.outE("Eurostar").value(Distance).head //495
+              </code></pre>
+            </div>
+					</section>
+				</section>
 
 				<section data-markdown>
 					<script type="text/template">
+
 						<img src="img/traversal_pizza.png" height="500px"/>
 
             markdown example
