@@ -47,19 +47,17 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 
-				<section data-markdown>
-					<script type="text/template">
-            ## Gremlin-Scala
-            ### Apache Tinkerpop 3
+				<section>
+          <!-- <h3>Gremlin-Scala for Apache Tinkerpop 3</h3> -->
 
-            Also: what is a graph db and why should I care?
+          <img src="img/gremlin-scala-logo.png" /><br/>
+          <!-- <h3>What is a graph db and why should I care?</h3> -->
 
-            [http://michaelpollmeier.com](http://michaelpollmeier.com)<br>
-            [https://github.com/mpollmeier/gremlin-scala](https://github.com/mpollmeier/gremlin-scala/)<br>
+          <a href="http://michaelpollmeier.com">http://michaelpollmeier.com</a><br>
+          <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala/</a><br>
 
 <!-- The goal of this talk is to get your brains all graphed up by the simplicity and power of graphs, and demonstrate how you can access graph databases using Gremlin-Scala. Gremlin-Scala provides a type safe DSL to access a variety of graph databases including Neo4j, OrientDB and Titan. It is the official Scala wrapper for Apache Tinkerpop 3, which aims to be the SQL of the graph database world.  -->
 <!-- I will demonstrate that graph databases are much simpler and typically better suited to model real life scenarios than relational databases. In my opinion the main reason that's stopping us using graph databases more often is the tooling, and Gremlin-Scala is here to change that. It is designed for both OLTP and OLAP traversals, so it can be applied to a variety of use cases. Developers can already benefit from the graph model in small CRUD applications, which are typically a nice playing field for evaluating new technologies.  -->
-					</script>
 				</section>
 
         <section>
@@ -216,49 +214,86 @@ WHERE person.id = 10
 					<section>
 						<h3>Create vertices and edges</h3>
             <pre class="stretch"><code data-trim class="scala">
-import gremlin.scala._
-import org.apache.tinkerpop.gremlin.tinkergraph.structure._
-
 val graph = TinkerGraph.open.asScala
 
+// typed keys
 val Founded = Key[String]("founded")
 val Distance = Key[Int]("distance")
-            </code></pre>
-            <div class="fragment" data-fragment-index="1">
-              <pre class="stretch"><code data-trim class="scala">
+
+// two vertices
 val paris = graph + "Paris"
 val london = graph + ("London", Founded → "43 AD")
 
+// some edges
 paris --- "OneWayRoad" --> london
 paris <-- "OtherWayAround" --- london
 paris <-- "Eurostar" --> london
-
 paris --- ("Eurostar", Distance → 495) --> london
+            </code></pre>
+					</section>
 
-paris.out("Eurostar").value(Founded).head //43 AD
-paris.outE("Eurostar").value(Distance).head //495
-              </code></pre>
-            </div>
+					<section>
+						<h3>Compile time safety #1</h3>
+            <pre class="stretch"><code data-trim class="scala">
+paris.out("Eurostar").value(Founded).head //43 AD : String
+paris.outE("Eurostar").value(Distance).head //495 : Int
+            </code></pre>
+					</section>
+					<section>
+						<h3>Compile time safety #2</h3>
+            <pre class="stretch"><code data-trim class="scala">
+graph.V.outE.inV  //compiles
+graph.V.outE.outE //does _not_ compile
+            </code></pre>
+					</section>
+					<section>
+						<h3>Compile time safety #3</h3>
+            <pre class="stretch"><code data-trim class="scala">
+paris.as("x")
+.outE("Eurostar").as("y")
+.value(Distance).as("z").select
+// returns `(Vertex, Edge, Int)` for each path
+            </code></pre>
+					</section>
+					<section>
+						<h3>For comprehensions</h3>
+            <pre class="stretch"><code data-trim class="scala">
+for {
+  person <- graph.V.hasLabel("person")
+  favorite <- person.outE("likes")
+              .orderBy("weight", Order.decr)
+              .limit(1)
+              .inV
+} yield (person, favorite.label)
+// returns (Vertex, String)
+            </code></pre>
+					</section>
+					<section>
+						<h3>Mapping vertices from/to case classes</h3>
+            <pre class="stretch"><code data-trim class="scala">
+@label("example")
+case class Example(@id id: Option[Int],
+                   longValue: Long,
+                   stringValue: Option[String])
+
+val example = Example(None, Long.MaxValue, Some("optional value"))
+val v: Vertex = graph + example
+v.toCC[Example] // equal to `example`, but with id set
+
+graph.V.hasLabel[Example]
+</code></pre>
 					</section>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-
-						<img src="img/traversal_pizza.png" height="500px"/>
-
-            markdown example
-            section
-
-						```
-						<section data-markdown>
-						  ## Markdown support
-
-						  Write content using inline or external Markdown.
-						  Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
+				<section>
+          <section>
+						<img src="img/github.png" />
+            <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a>
+          </section>
+          <section>
+						<img src="img/gremlin-examples.png" height="600px" />
+            <a href="https://github.com/mpollmeier/gremlin-scala-examples">https://github.com/mpollmeier/gremlin-scala-examples</a>
+          </section>
 				</section>
 
 				<section>
