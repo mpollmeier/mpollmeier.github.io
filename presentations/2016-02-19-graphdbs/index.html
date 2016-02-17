@@ -250,7 +250,8 @@ graph.V.outE.outE //does _not_ compile
             <pre class="stretch"><code data-trim class="scala">
 paris.as("x")
 .outE("Eurostar").as("y")
-.value(Distance).as("z").select
+.value(Distance).as("z")
+.select
 // returns `(Vertex, Edge, Int)` for each path
             </code></pre>
 					</section>
@@ -258,7 +259,7 @@ paris.as("x")
 						<h3>For comprehensions</h3>
             <pre class="stretch"><code data-trim class="scala">
 for {
-  person <- graph.V.hasLabel("person")
+  person   <- graph.V.hasLabel("person")
   favorite <- person.outE("likes")
               .orderBy("weight", Order.decr)
               .limit(1)

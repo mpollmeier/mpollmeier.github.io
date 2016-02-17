@@ -18,8 +18,9 @@ import shapeless.syntax.std.product._
 (5, "five").toHList
 
 * to use in your function: define implicits (explicitly) - find them with your IDE
+import shapeless.ops.product.ToHList
 def tupleToHList[P <: Product, L <: HList](p: P)(
-  implicit conv: shapeless.ops.product.ToHList.Aux[P,L]): L =
+  implicit conv: ToHList.Aux[P,L]): L =
   p.toHList
 def hlist = tupleToHList((5, "five"))
 
@@ -47,14 +48,14 @@ def compiles = atLeastTwo(5 :: "five" :: HNil)
 # polymorphic function values
 import shapeless.poly._
 
-object typeMangler extends Poly1 {
+object TypeMangler extends Poly1 {
   implicit def caseInt = at[Int](_ => "now it's a string")
   implicit def caseString = at[String](_.length)
 }
-def string = typeMangler(5)
-def int = typeMangler("some string")
+def string = TypeMangler(5)
+def int = TypeMangler("some string")
 def hlist = 5 :: "five" :: HNil
-def list = hlist map typeMangler
+def list = hlist map TypeMangler
 
 # compose it all together: function that takes a tuple of at least two elements, uses a polymorphic map and returns a transformed tuple
 import shapeless._
