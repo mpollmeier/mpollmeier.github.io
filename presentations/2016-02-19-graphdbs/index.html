@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Gremlin-Scala for Tinkerpop3</title>
+		<title>Gremlin-Scala for TinkerPop3</title>
 
 		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
 		<meta name="author" content="Hakim El Hattab">
@@ -48,7 +48,7 @@
 			<div class="slides">
 
 				<section>
-          <!-- <h3>Gremlin-Scala for Apache Tinkerpop 3</h3> -->
+          <!-- <h3>Gremlin-Scala for Apache TinkerPop 3</h3> -->
 
           <img src="img/gremlin-scala-logo.png" /><br/>
           <!-- <h3>What is a graph db and why should I care?</h3> -->
@@ -168,11 +168,10 @@ WHERE person.id = 10
           <section data-markdown>
             <script type="text/template">
               ## JOINS vs Traversal
-              * joins are complex and long winded
+              * joins are long winded
+              * joins are not safe
               * joins (using indexes) are O(log(n))
-              * traversals are near O(1)
-                * traversing cost is no more affected by database size
-              * joins are not safe - no one is stopping you from joining the wrong table
+              * traversals are near O(1) for any db size
             </script>
           </section>
 
@@ -309,7 +308,7 @@ graph.V.hasLabel[Example]
               small apps: definitely ready
             </h3>
             <h3>
-              big data apps: dependent on driver
+              big data apps: depending on the driver and use case
             </h3>
           </section>
 				</section>
