@@ -5,6 +5,6 @@ url: http://www.michaelpollmeier.com
 safe: false
 lsi: false
 pygments: true
-markdown: redcarpet
+markdown: kramdown
 exclude: ['Gemfile', 'Gemfile.lock']
 permalink: pretty
