@@ -4,7 +4,7 @@ description: Scala, Gremlin-Scala and other development related things
 url: http://www.michaelpollmeier.com
 safe: false
 lsi: false
-pygments: true
+highlighter: 'rouge'
 markdown: kramdown
 exclude: ['Gemfile', 'Gemfile.lock']
 permalink: pretty
