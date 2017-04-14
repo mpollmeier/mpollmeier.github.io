@@ -13,6 +13,7 @@
         border: none;
         box-shadow: none;
       }
+      .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { text-transform: none; }
     </style>
 
 		<!-- Theme used for syntax highlighting of code -->
@@ -39,29 +40,108 @@
 
           <img src="img/shiftleft.png" /><br/>
           
-          <!-- German, live in NZ, proud daddy of a one year old daughter -->
-          <!-- creator of Gremlin-Scala // a library to access graph databases. Using scala.meta for serialising there -->
-          <!-- work for ShiftLeft.io //Silicon Valley security startup: static code analysis using graph databases, runtime component -->
+          <aside class="notes">
+            German, live in NZ, daddy of a one year old daughter<br/><br/>
+            a library to access graph databases. Using scala.meta for serialising there<br/><br/>
+            ShiftLeft.io //Silicon Valley security startup: static code analysis using graph databases, runtime component<br/><br/>
+          </aside>
         </section>
 
         <section>
-          <section>Context</section>
+          <section><h2>Context</h2></section>
           <section>
-            old style macros will be phased out
+            <h2> old style macros will be phased out </h2>
             <aside class="notes">
-              announced last year at ScalaDays
-              that's a good thing: they are clunky and hard to write and debug
-              scala.meta will replace them
-              scala.meta already works with 2.11, 2.12, dotty and scala.js (scala.native should follow shortly)
+              announced last year at ScalaDays<br/><br/>
+              that's a good thing: they are clunky and hard to write and debug<br/><br/>
+              scala.meta will replace them<br/><br/>
+              scala.meta already works with 2.11, 2.12, dotty and scala.js (scala.native should follow shortly)<br/><br/>
+            </aside>
+          </section>
+          <section>
+            <h2> code parsing </h2>
+            <ul>
+              <li>complete, including comments</li>
+              <li>lot's of material online</li>
+              <li>scalafmt, scalafix</li>
+            </ul>
+            <aside class="notes">documentation and discussion center mostly around code analysis and transformation<br/><br/>
+              code generation is an equally if not more important subject for metaprogramming.</aside>
+          </section>
+          <section>
+            <h2>code generation</h2>
+            <ul>
+              <li>gremlin-scala serialiser: replace old style macro</li>
+              <li>not enough documentation/examples/libs available yet</li>
+              <li>much nicer syntax than old macros</li>
+            </ul>
+            <aside class="notes">
             </aside>
           </section>
         </section>
-        
+
+        <section>
+          <h2>Talk objective</h2>
+          <ul>
+            <li>believe: much nicer than old style macros
+            <li>understand: annotated blocks are parsed into the scala.meta DSL and you can manipulate them</li>
+            <li>encourage: write new style macros for code gen, use libs that use scala.meta</li>
+          </ul>
+          <aside class="notes">
+            manipulate them in whatever way, in Scala
+          </aside>
+        </section>
+
+        <section>
+          <section>
+            <h2>scala.meta ADT</h2>
+            <ul>
+              <li>can use scala.meta case classes</li>
+              <li>or quasiquotes</li>
+            </ul>
+            <aside class="notes">
+              quasiquotes: took over the good parts from old style macros
+              quasiquotes are superior for complex things, but sometimes instantiating the scala.meta case class is easier - you'll see in live coding
+            </aside>
+          </section>
+          <section>
+            <h2>trees</h2>
+            <ul>
+              <li>Type.Name(value: String)</li>
+              <li>Defn.Class(mods, name, tparams, ctor, templ)</li>
+            </ul>
+            <aside class="notes">
+            </aside>
+          </section>
+          <section>
+            <h2>quasiquotes</h2>
+            <ul>
+              <li></li>
+              <li></li>
+            </ul>
+            <aside class="notes">
+            </aside>
+          </section>
+        </section>
+
         <!-- <section> -->
         <!--   <h2></h2> -->
+        <!--   <ul> -->
+        <!--     <li></li> -->
+        <!--     <li></li> -->
+        <!--   </ul> -->
+        <!--   <aside class="notes"> -->
+        <!--   </aside> -->
         <!-- </section> -->
+
         <!--   <section> -->
         <!--     <h2></h2> -->
+        <!--     <ul> -->
+        <!--       <li></li> -->
+        <!--       <li></li> -->
+        <!--     </ul> -->
+        <!--     <aside class="notes"> -->
+        <!--     </aside> -->
         <!--   </section> -->
         
 			</div>
