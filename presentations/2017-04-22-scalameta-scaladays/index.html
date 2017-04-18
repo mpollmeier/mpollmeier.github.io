@@ -42,12 +42,12 @@
         </section>
 
 				<section>
-          <img src="img/nz_small.jpg"  height="200px"/>
-          <img src="img/gremlin-scala-logo.png" height="100px" />
-          <img src="img/shiftleft.png" height="100px" />
+          <h2>Michael Pollmeier</h2>
+          Germany, New Zealand, California <br/>
+          <a href="https://github.com/mpollmeier/gremlin-scala/"><img src="img/gremlin-scala-logo.png" height="100px" /></a>
+          <a href="https://shiftleft.io/"><img src="img/shiftleft.png" height="75px" /></a>
           
           <aside class="notes">
-            Michael Pollmeier <br/>
             German, live in NZ, daddy of a one year old daughter<br/><br/>
             gremlin-scala: library to query and traverse graph databases<br/><br/>
             ShiftLeft: Silicon Valley security startup: static code analysis using graph databases, runtime component<br/><br/>
@@ -56,12 +56,37 @@
 
         <section>
           <section>
-            <h2> old style macros will be phased out </h2>
+            <h2>scala.meta</h2>
+              <ul>
+                <li>metaprogramming: code that generates code</li>
+                <li>DSL to parse/manipulate code</li>
+                <li>compiler plugin, hooked up with annotation</li>
+              </ul>
             <aside class="notes">
-              announced last year at ScalaDays<br/><br/>
-              that's a good thing: they are clunky and hard to write and debug<br/><br/>
-              scala.meta will replace them<br/><br/>
-              scala.meta already works with 2.11, 2.12, dotty and scala.js (scala.native should follow shortly)<br/><br/>
+            </aside>
+          </section>
+          <section>
+            <h2>objective for this talk</h2>
+            <ul>
+              <li><b>understand</b>: basics of scala.meta, code pipeline</li>
+              <li><b>believe</b>: easier to write/debug/maintain than old macros</li>
+              <li><b>encourage</b>: write new style macros, use libs that use scala.meta</li>
+            </ul>
+            <aside class="notes">
+              pipeline: annotated blocks are parsed into the scala.meta DSL and you can manipulate them
+            </aside>
+          </section>
+          <section>
+            <h2>old style macros will be phased out</h2>
+            <ul>
+              <li>they are hard to write and debug, many rough edges</li>
+              <li>scala.meta will replace them</li>
+              <li>already works with 2.11, 2.12, dotty and scala.js</li>
+            </ul>
+            <aside class="notes">
+              announced last year at ScalaDays <br/> <br/>
+              that's a good thing: they are hard to write and debug, many rough edges<br/> <br/>
+              scala.native should follow shortly<br/> <br/>
             </aside>
           </section>
           <section>
@@ -80,88 +105,144 @@
           <section>
             <h2>feature: code generation</h2>
             <ul>
-              <li>e.g. serialiser and ADT generator</li>
+              <li>e.g. serialiser and domain class generator</li>
               <li>not enough documentation/examples/libs available</li>
             </ul>
             <aside class="notes">
               countless use cases<br/><br/>
               my initial motivation to check out scala.meta<br/><br/>
               replace gremlin-scala serialiser macro that someone contributed - I found it quite hard to extend and maintain<br/><br/>
-              typical way to wire this up is using macro annotation
             </aside>
           </section>
         </section>
 
         <section>
-          <h2>objective for this talk</h2>
-          <ul>
-            <li><b>understand</b>: basics of scala.meta, code pipeline</li>
-            <li><b>believe</b>: easier to write/debug/maintain than old macros</li>
-            <li><b>encourage</b>: write new style macros, use libs that use scala.meta</li>
-          </ul>
-          <aside class="notes">
-            pipeline: annotated blocks are parsed into the scala.meta DSL and you can manipulate them
-          </aside>
-        </section>
-
-        <section>
+          <section>
+            <h2>wiring: macro with inline/meta</h2>
+            <pre><code data-trim class="scala">
+            @mappable case class Customer(name: String, yearOfBirth: Int)
+            </code></pre>
+            <pre><code data-trim class="scala">
+            class mappable extends StaticAnnotation {
+              inline def apply(defn: Any): Any = meta {
+                defn
+              }
+            }
+            </code></pre>
+            <aside class="notes">
+              <br/><br/>
+            </aside>
+          </section>
           <section>
             <h2>scala.meta ADT</h2>
-            <ul>
-              <li>Type.Name(value: String)</li>
-              <li>Defn.Class(mods, name, tparams, ctor, templ)</li>
-            </ul>
+            typically the easiest way to get started
+
+            <pre><code data-trim class="scala">
+            // Different types of Name, just wrapping String
+            trait Type.Name(value: String)
+            trait Term.Name(value: String)
+            </code></pre>
+
+            <pre><code data-trim class="scala">
+            // Definition of object, class, type etc.
+            trait Object(mods: Seq[Mod], name: Term.Name, templ: Template)
+
+            trait Class(mods: Seq[Mod], name: Type.Name,
+              tparams: Seq[Type.Param], ctor: Ctor.Primary,
+              templ: Template)
+
+            trait Type(mods: Seq[Mod], name: Type.Name,
+              tparams: Seq[Type.Param], body: Type)
+            </code></pre>
             <aside class="notes">
-              In some sense, scala.meta is a normal scala library<br/><br/>
-              Code pipeline: get scala.meta ADT, return scala.meta ADT
-              Type.Name: value class around String<br/><br/>
-              Defn.Class: contains everything from the class<br/><br/>
-              ADT is one option, and sometimes it makes sense to use it
+              In some sense, scala.meta is just another scala library<br/><br/>
+              easy to convert between the different X.Name<br/><br/>
+              Code pipeline: get scala.meta ADT, return scala.meta ADT<br/><br/>
             </aside>
           </section>
           <section>
             <h2>quasiquotes</h2>
-            <pre><code data-trim class="scala">
-              val clazz = q"case class Foo(i: Int)"
-
-              clazz match {
-                case q"""..$mods class $tname[..$tparams]
-                         ..$ctorMods (...$paramss) extends $template""" => 
-              }
-
-              q"object MyObject { $clazz }"
-
-              t"String"
-            </code></pre>
-            <a href="https://github.com/scalameta/scalameta/blob/master/notes/quasiquotes.md">quasiquotes.md</a>
+            <ul>
+              <li>DSL to construct/deconstruct scala.meta ADT</li>
+              <li>more concise, yet further away from standard scala</li>
+              <li>start with ADT, refactor into quasiquotes for readability</li>
+              <li>reference documentation at <a href="https://github.com/scalameta/scalameta/blob/master/notes/quasiquotes.md">notes/quasiquotes.md</a></li>
+            </ul>
             <aside class="notes">
-              quasiquotes: took over the good parts from old style macros<br/><br/>
-              constructing and deconstructing trees<br/><br/>
-              reference other trees with $otherTree<br/><br/>
-              when other value is a sequence, use ..$something (just like in old style macros)<br/><br/>
+              took over the good parts from old style macros<br/><br/>
+              instantiating the scala.meta case class is easier to start with, but then refactor to quasiquotes for readability<br/><br/>
+            </aside>
+          </section>
+          <section>
+            <h2>construct and deconstruct ADT using quasiquotes</h2>
+            <pre><code data-trim class="scala">
+              val clazz = q"case class Foo(i: Int)" //construction
+            </code></pre>
+            <pre><code data-trim class="scala">
+              clazz match {  // deconstruction
+                case q"""..$mods class $tname[..$tparams]
+                         ..$ctorMods (...$paramss) extends $template""" ⇒  
+              }
+            </code></pre>
+
+            <aside class="notes">
               generic quasiquotes: q<br/><br/>
               special ones: param, t, ... -> sometimes the quasiquotes are ambiguous (e.g. Type and Name)<br/><br/>
-              instantiating the scala.meta case class is easier to start with, but then refactor to quasiquotes for readability<br/><br/>
+            </aside>
+          </section>
+
+          <section>
+            <h2>nesting quasiquotes</h2>
+            <pre><code data-trim class="scala">
+              q"""object MyObject {
+                $clazz          //Defn.Class
+                ..$otherClasses //Seq[Defn.Class]
+              }"""
+            </code></pre>
+
+            <aside class="notes">
+              when other value is a sequence, use ..$something (just like in old style macros)<br/><br/>
+            </aside>
+          </section>
+          <section>
+            <h2>special quasiquote interpolators</h2>
+            to resolve ambiguities
+            <pre><code data-trim class="scala">
+              q"String"  //Term.Name
+              t"String"  //Type.Name
+              mod"final" //Mod
+            </code></pre>
+            <aside class="notes">
+              param, t, ... -> sometimes the quasiquotes are ambiguous (e.g. Type and Name)<br/><br/>
             </aside>
           </section>
         </section>
         
         <section>
           <h2>live coding</h2>
+          <ul>
+            <li>understand code pipeline</li>
+            <li>build generic ToMap for case classes</li>
+            <li>maybe: domain class generator</li>
+          </ul>
+          <p>
+            <a href="https://github.com/mpollmeier/scalameta-tutorial-scaladays">github.com/mpollmeier/scalameta-tutorial-scaladays</a>
+          </p>
         </section>
 
         <section>
           <h2>passing values to annotation</h2>
           <pre><code data-trim class="scala">
           @myMacro("fooValue") class MyClass
-              
+          </code></pre>
+          <pre><code data-trim class="scala">
           class myMacro(foo: String) extends StaticAnnotation {
             inline def apply(defn: Any): Any = meta {
               println(foo) // error: value not found
 
               this match {
-                case q"new $_()" =>  // no params defined
-                case q"new $_(params))" =>
+                case q"new $_()" ⇒ // no params defined
+                case q"new $_(params))" ⇒ 
               }
             }
           }
@@ -175,30 +256,19 @@
         </section>
 
         <section>
-          <h2>annotating class members</h2>
-          only possible with non-meta annotations
+          annotating class members only possible with non-meta annotations
           <pre><code data-trim class="scala">
           @mappable case class CC(@nullable s: String)
-
+          </code></pre>
+          <pre><code data-trim class="scala">
           class nullable extends StaticAnnotation
           // no inline/meta block allowed, but likely not necessary
           </code></pre>
-          discussion on <a href="https://github.com/scalameta/paradise/issues/192">#192</a> and <a href="https://github.com/scalameta/paradise/issues/16">#16</a>
+          <p style="font-size: 70%">
+          Discussion at scalameta/paradise <a href="https://github.com/scalameta/paradise/issues/16">#16</a> and <a href="https://github.com/scalameta/paradise/issues/192">#192</a>
+          </p>
           <aside class="notes">
             @nullable is available as a mod for the member
-          </aside>
-        </section>
-
-        <section>
-          <h2>smallprint (*)</h2>
-          <ul>
-            <li>limited amount of documentation</li>
-            <li>great community, very active</li>
-            <li>limited IDE support</li>
-          </ul>
-          <aside class="notes">
-            my personal FAQ list for scala.meta<br/><br/>
-            IDE support: only for writing macro, ensime doesn't dereference the macro internals of scalameta (jumping to definitions within meta) -> println debugging, but with good help from compiler, like in live coding session<br/><br/>
           </aside>
         </section>
 
@@ -238,20 +308,32 @@
         <section>
           <h2>final thoughts</h2>
           <ul>
+            <li>really nice DSL, support for almost all scala platforms</li>
+            <li>active community, very responsive</li>
             <li>DSL for code generation already stable</li>
-            <li>wider adoption probably requires better IDE support</li>
+            <li>better IDE support would be good</li>
             <li>if you write a new macro or don't like your existing one, use scala.meta</li>
             <li>don't be afraid to use libs that use scala.meta</li>
           </ul>
           <aside class="notes">
+            nailed it <br/>
             stable: upgrade von 1.3.0 through to 1.7.0 without changes<br/><br/>
             currently: lot's of println debugging<br/><br/>
+            IDE support: only for writing macro, ensime doesn't dereference the macro internals of scalameta (jumping to definitions within meta) -> println debugging, but with good help from compiler, like in live coding session<br/><br/>
+            scala.meta needs a logo! <br/> <br/>
           </aside>
         </section>
 
 				<section>
 					<h2>questions?</h2>
-          <img src="img/cat-question.jpg" height="400px" />
+          <a href="http://www.michaelpollmeier.com">www.michaelpollmeier.com</a><br/>
+          <a href="https://github.com/mpollmeier">github.com/mpollmeier</a><br/>
+          <a href="https://twitter.com/pollmeier">twitter.com/pollmeier</a><br/>
+          <img src="img/cat-question.jpg" height="300px" />
+          <aside class="notes">
+            github: live coding repo, scalameta-serialiser, gremlin-scala
+            blog: post about scala.meta, link to this presentation
+          </aside>
 				</section>
 
         <!-- <section> -->
@@ -280,6 +362,10 @@
         <!-- </code></pre> -->
 			</div>
 		</div>
+
+    <div style="position: absolute; bottom: 37px; right: 150px; font-size: 1.4em;">
+      Michael Pollmeier ~ code generation with scala.meta
+    </div>
 
 
 		<script src="lib/js/head.min.js"></script>
