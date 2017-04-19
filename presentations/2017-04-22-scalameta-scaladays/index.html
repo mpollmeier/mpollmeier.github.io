@@ -7,7 +7,10 @@
 		<title>code generation with scala.meta</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/white.css">
+		<!-- <link rel="stylesheet" href="css/theme/beige.css"> -->
+		<link rel="stylesheet" href="css/theme/sky.css">
+		<!-- <link rel="stylesheet" href="css/theme/serif.css"> -->
+		<!-- <link rel="stylesheet" href="css/theme/solarized.css"> -->
     <style media="screen" type="text/css">
       .reveal section img {
         border: none;
@@ -34,23 +37,32 @@
 				<section>
           <h2>code generation with scala.meta</h2>
           <aside class="notes">
-            in this talk we'll explore code generation with scala.meta <br/>
-            you'll learn how nice and simple the DSL is and hopefully want to explore further yourself<br/>
+            Welcome everybody, my name is Michael Pollmeier and
+            in this talk we'll explore code generation with scala.meta <br/> <br/>
+
+            You'll learn how nice and simple the DSL is and hopefully want to explore further yourself<br/> <br/>
+
             I'll try to cover all experience levels, not just scala experts<br/>
-            based on eugene's phd thesis. he's here as well to answer difficult questions :) <br/>
+            Can I get a quick show of hands: who's been doing scala for lt1 year? lt2? lt3? <br/>
+            Not everybody might not understand every detail, but I'll throw in some simple explanations so you get the concepts, and please ask questions as we go<br/> <br/>
+
+            Scala.meta is a community effort, but based on eugene's phd thesis. he's here as well to answer difficult questions :) <br/>
           </aside>
         </section>
 
 				<section>
-          <h2>Michael Pollmeier</h2>
           Germany, New Zealand, California <br/>
+          <a href="http://tinkerpop.apache.org/"><img src="img/apache-tinkerpop-logo.png" height="100px" /></a>
           <a href="https://github.com/mpollmeier/gremlin-scala/"><img src="img/gremlin-scala-logo.png" height="100px" /></a>
-          <a href="https://shiftleft.io/"><img src="img/shiftleft.png" height="75px" /></a>
+          <br/>
+          <a href="https://shiftleft.io/"><img src="img/shiftleft.png" height="70px" /></a>
+          <br/>
+          <a href="https://twitter.com/pollmeier">@pollmeier</a>
           
           <aside class="notes">
             German, live in NZ, daddy of a one year old daughter<br/><br/>
-            gremlin-scala: library to query and traverse graph databases<br/><br/>
             ShiftLeft: Silicon Valley security startup: static code analysis using graph databases, runtime component<br/><br/>
+            gremlin-scala: library to query and traverse graph databases<br/><br/>
           </aside>
         </section>
 
@@ -60,9 +72,11 @@
               <ul>
                 <li>metaprogramming: code that generates code</li>
                 <li>DSL to parse/manipulate code</li>
-                <li>compiler plugin, hooked up with annotation</li>
+                <li>wired up with annotation</li>
+                <li>executed at compile time with compiler plugin</li>
               </ul>
             <aside class="notes">
+              generate code: i.e. also amend, verify code, e.g. a separate compilation step that verifies it against a db/service schema
             </aside>
           </section>
           <section>
@@ -79,13 +93,13 @@
           <section>
             <h2>old style macros will be phased out</h2>
             <ul>
-              <li>they are hard to write and debug, many rough edges</li>
+              <li>hard to write and debug, many rough edges</li>
               <li>scala.meta will replace them</li>
               <li>already works with 2.11, 2.12, dotty and scala.js</li>
             </ul>
             <aside class="notes">
               announced last year at ScalaDays <br/> <br/>
-              that's a good thing: they are hard to write and debug, many rough edges<br/> <br/>
+              that's a good thing<br/> <br/>
               scala.native should follow shortly<br/> <br/>
             </aside>
           </section>
@@ -97,9 +111,9 @@
               <li>scalafmt, scalafix</li>
             </ul>
             <aside class="notes">
-              documentation and discussion center mostly around code analysis and transformation<br/><br/>
+              documentation and discussion center mostly around this, in order to do code analysis and transformation<br/>
+              olafur geirsson<br/>
               code generation is an equally if not more important subject for metaprogramming.<br/><br/>
-              olafur geirsson
             </aside>
           </section>
           <section>
@@ -130,12 +144,14 @@
             }
             </code></pre>
             <aside class="notes">
-              <br/><br/>
+              Ok, so how does it work? Here's the plumbing you need to do. Fairly simple.<br/> <br/>
+              inline/meta are becoming new keywords <br/> <br/>
+              defn is the definition of whatever got annotated, in the scala.meta adt (next slide)<br/>
             </aside>
           </section>
           <section>
             <h2>scala.meta ADT</h2>
-            typically the easiest way to get started
+            first port of call for deconstruction
 
             <pre><code data-trim class="scala">
             // Different types of Name, just wrapping String
@@ -145,13 +161,14 @@
 
             <pre><code data-trim class="scala">
             // Definition of object, class, type etc.
-            trait Object(mods: Seq[Mod], name: Term.Name, templ: Template)
+            trait Defn.Object(mods: Seq[Mod], name: Term.Name,
+              templ: Template)
 
-            trait Class(mods: Seq[Mod], name: Type.Name,
+            trait Defn.Class(mods: Seq[Mod], name: Type.Name,
               tparams: Seq[Type.Param], ctor: Ctor.Primary,
               templ: Template)
 
-            trait Type(mods: Seq[Mod], name: Type.Name,
+            trait Defn.Type(mods: Seq[Mod], name: Type.Name,
               tparams: Seq[Type.Param], body: Type)
             </code></pre>
             <aside class="notes">
@@ -164,13 +181,11 @@
             <h2>quasiquotes</h2>
             <ul>
               <li>DSL to construct/deconstruct scala.meta ADT</li>
-              <li>more concise, yet further away from standard scala</li>
-              <li>start with ADT, refactor into quasiquotes for readability</li>
+              <li>more concise, yet further away from a normal library</li>
               <li>reference documentation at <a href="https://github.com/scalameta/scalameta/blob/master/notes/quasiquotes.md">notes/quasiquotes.md</a></li>
             </ul>
             <aside class="notes">
               took over the good parts from old style macros<br/><br/>
-              instantiating the scala.meta case class is easier to start with, but then refactor to quasiquotes for readability<br/><br/>
             </aside>
           </section>
           <section>
@@ -184,10 +199,14 @@
                          ..$ctorMods (...$paramss) extends $template""" ⇒  
               }
             </code></pre>
-
+            
+            <ul>
+              <li> for construction, quasiquotes are always easier </li>
+              <li> for deconstruction start with ADT </li>
+            </ul>
+            
             <aside class="notes">
-              generic quasiquotes: q<br/><br/>
-              special ones: param, t, ... -> sometimes the quasiquotes are ambiguous (e.g. Type and Name)<br/><br/>
+              for deconstructing, start with ADT and potentially refactor into quasiquotes for readability<br/><br/>
             </aside>
           </section>
 
@@ -222,7 +241,8 @@
           <h2>live coding</h2>
           <ul>
             <li>understand code pipeline</li>
-            <li>build generic ToMap for case classes</li>
+            <li>making the same steps a new user would take</li>
+            <li>build generic serialiser: class ⇒ Map[String, Any]</li>
             <li>maybe: domain class generator</li>
           </ul>
           <p>
@@ -231,45 +251,64 @@
         </section>
 
         <section>
-          <h2>passing values to annotation</h2>
-          <pre><code data-trim class="scala">
-          @myMacro("fooValue") class MyClass
-          </code></pre>
-          <pre><code data-trim class="scala">
-          class myMacro(foo: String) extends StaticAnnotation {
-            inline def apply(defn: Any): Any = meta {
-              println(foo) // error: value not found
+          <section>
+            <h2> advanced FAQ </h2>
+          </section>
+          <section>
+            <h2>passing values to annotation</h2>
+            <pre><code data-trim class="scala">
+            @myMacro("fooValue") class MyClass
+            </code></pre>
+            <pre><code data-trim class="scala">
+            class myMacro(foo: String) extends StaticAnnotation {
+              inline def apply(defn: Any): Any = meta {
+                println(foo) // error: value not found
 
-              this match {
-                case q"new $_()" ⇒ // no params defined
-                case q"new $_(params))" ⇒ 
+                this match {
+                  case q"new $_()" ⇒ // no params defined
+                  case q"new $_(params))" ⇒ 
+                }
               }
             }
-          }
-          </code></pre>
-          <aside class="notes">
-          e.g. to pass url of json file<br/><br/>
-          possible, but not as you think<br/><br/>
-          still makes sense to define it that way so you get auto completion in the IDE, but it doesn't really make a difference<br/><br/>
-          examples in scalameta-serialiser and scalameta faq<br/><br/>
-          </aside>
-        </section>
+            </code></pre>
+            <aside class="notes">
+            e.g. to pass url of json file<br/><br/>
+            possible, but not as you think<br/><br/>
+            still makes sense to define it that way so you get auto completion in the IDE, but it doesn't really make a difference<br/><br/>
+            examples in scalameta-serialiser and scalameta faq<br/><br/>
+            </aside>
+          </section>
 
-        <section>
-          annotating class members only possible with non-meta annotations
-          <pre><code data-trim class="scala">
-          @mappable case class CC(@nullable s: String)
-          </code></pre>
-          <pre><code data-trim class="scala">
-          class nullable extends StaticAnnotation
-          // no inline/meta block allowed, but likely not necessary
-          </code></pre>
-          <p style="font-size: 70%">
-          Discussion at scalameta/paradise <a href="https://github.com/scalameta/paradise/issues/16">#16</a> and <a href="https://github.com/scalameta/paradise/issues/192">#192</a>
-          </p>
-          <aside class="notes">
-            @nullable is available as a mod for the member
-          </aside>
+          <section>
+            annotating class members only possible with non-meta annotations
+            <pre><code data-trim class="scala">
+            @mappable case class CC(@nullable s: String)
+            </code></pre>
+            <pre><code data-trim class="scala">
+            class nullable extends StaticAnnotation
+            // no inline/meta block allowed, but likely not necessary
+            </code></pre>
+            <p style="font-size: 70%">
+            Discussion at scalameta/paradise <a href="https://github.com/scalameta/paradise/issues/16">#16</a> and <a href="https://github.com/scalameta/paradise/issues/192">#192</a>
+            </p>
+            <aside class="notes">
+              @nullable is available as a mod for the member
+            </aside>
+          </section>
+
+          <section>
+            forward reference over definition also applies to defs
+            <pre><code data-trim class="scala">
+              val b = a + 1
+              def a = 5
+              [error] forward reference extends over definition of value b
+              [error]         val b = a + 1
+              [error]                 ^
+            </code></pre>
+            <aside class="notes">
+              @nullable is available as a mod for the member
+            </aside>
+          </section>
         </section>
 
         <section>
@@ -294,12 +333,14 @@
             was born when I rewrote gremlin-scala serialiser<br/>
             I thought it makes sense to factor this out, maintenance can be shared<br/>
             Generates seraliser / deserialiser<br/><br/>
+
+            keeps existing companion object, injects the generated typeclasses<br/>
+            type parameters of annotated class<br/>
             map class members to different names: @mappedTo("iMapped") i: Int<br/>
             mark class members as nullable: @nullable nullableValue: String<br/>
             Option types<br/>
             default values<br/>
-            keeps existing body of the annotated class<br/>
-            keeps existing companion object, injects the generated typeclasses<br/>
+            keeps existing body of the annotated class<br/> <br/>
             inject your own parameters for later use, useful when using this in a library: @mappable(Map("param1" -> "value1"))<br/>
 
           </aside>
@@ -308,11 +349,11 @@
         <section>
           <h2>final thoughts</h2>
           <ul>
-            <li>really nice DSL, support for almost all scala platforms</li>
-            <li>active community, very responsive</li>
-            <li>DSL for code generation already stable</li>
+            <li>great metaprogramming DSL</li>
+            <li>support for almost all scala platforms</li>
+            <li>active & responsive community</li>
             <li>better IDE support would be good</li>
-            <li>if you write a new macro or don't like your existing one, use scala.meta</li>
+            <li>use it for new macros and replace existing ones</li>
             <li>don't be afraid to use libs that use scala.meta</li>
           </ul>
           <aside class="notes">
@@ -329,7 +370,7 @@
           <a href="http://www.michaelpollmeier.com">www.michaelpollmeier.com</a><br/>
           <a href="https://github.com/mpollmeier">github.com/mpollmeier</a><br/>
           <a href="https://twitter.com/pollmeier">twitter.com/pollmeier</a><br/>
-          <img src="img/cat-question.jpg" height="300px" />
+          <img src="img/rate-this-session.png" height="300px" />
           <aside class="notes">
             github: live coding repo, scalameta-serialiser, gremlin-scala
             blog: post about scala.meta, link to this presentation
@@ -363,10 +404,12 @@
 			</div>
 		</div>
 
-    <div style="position: absolute; bottom: 37px; right: 150px; font-size: 1.4em;">
+    <div style="position: absolute; bottom: 20px; right: 100px; font-size: 1.4em;">
       Michael Pollmeier ~ code generation with scala.meta
     </div>
 
+    <a href="http://event.scaladays.org/scaladays-chicago-2017"><img src="img/scaladays-small.png" style="position: absolute; top: 20px; right: 20px;" /></a>
+    <a href="https://shiftleft.io/"><img src="img/shiftleft.png" height="30px" style="position: absolute; bottom: 20px; left: 20px;" /></a>
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
