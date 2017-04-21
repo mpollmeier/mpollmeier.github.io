@@ -7,6 +7,7 @@ title: Presentations
   <h1>Presentations</h1>
 
   <ul>
+    <li> 21/04/2017: <a href="2017-04-22-scalameta-scaladays">Introduction to scala.meta (ScalaDays Chicago)</a></li>
     <li> 19/02/2016: <a href="2016-02-19-graphdbs">Gremlin-Scala for TinkerPop3</a></li>
     <li> 19/02/2016: <a href="2016-02-19-shapeless.md">Practical(ly) shapeless (live coding)</a></li>
     <li> 05/09/2014: <a href="2014-09-05-shapeless-scaladays">Using shapeless to build a cool typesafe library</a> - a segway into <a href="https://github.com/mpollmeier/gremlin-scala">Gremlin-Scala</a></li>
