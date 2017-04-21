@@ -40,13 +40,14 @@
             Welcome everybody, my name is Michael Pollmeier and
             in this talk we'll explore code generation with scala.meta <br/> <br/>
 
-            You'll learn how nice and simple the DSL is and hopefully want to explore further yourself<br/> <br/>
+            You'll learn how nice and simple the scala.meta DSL is and hopefully want to explore further yourself<br/> <br/>
 
             I'll try to cover all experience levels, not just scala experts<br/>
             Can I get a quick show of hands: who's been doing scala for lt1 year? lt2? lt3? <br/>
             Not everybody might not understand every detail, but I'll throw in some simple explanations so you get the concepts, and please ask questions as we go<br/> <br/>
 
-            Scala.meta is a community effort, but based on eugene's phd thesis. he's here as well to answer difficult questions :) <br/>
+            Who here has attended Pathikrits talk yesterday? <br/>
+            You'll find some overlap, but there's also a lot of things we do differently. 
           </aside>
         </section>
 
@@ -60,47 +61,64 @@
           <a href="https://twitter.com/pollmeier">@pollmeier</a>
           
           <aside class="notes">
-            German, live in NZ, daddy of a one year old daughter<br/><br/>
+            I'm from Germany originally, live in NZ with my wife and daughter. Have been there 5 years<br/><br/>
+            I'm an apache member and tinkerpop committer, and the author of gremlin-scala, which uses the power of the scala typesystem to help you build graph database queries.<br/><br/>
             ShiftLeft: Silicon Valley security startup: static code analysis using graph databases, runtime component<br/><br/>
-            gremlin-scala: library to query and traverse graph databases<br/><br/>
           </aside>
         </section>
 
         <section>
           <section>
-            <h2>scala.meta</h2>
+            <h2>metaprogramming</h2>
               <ul>
-                <li>metaprogramming: code that generates code</li>
-                <li>DSL to parse/manipulate code</li>
-                <li>wired up with annotation</li>
-                <li>executed at compile time with compiler plugin</li>
+                <li>code that manipulates code</li>
+                <li>verify code: against a schema (db, endoint)</li>
+                <li>amend code: performance metrics, logging</li>
+                <li>generate code</li>
+                <ul>
+                  <li>domain model to case classes</li>
+                  <li>serialisation macro</li>
+                  <li>...</li>
+                </ul>
               </ul>
             <aside class="notes">
-              generate code: i.e. also amend, verify code, e.g. a separate compilation step that verifies it against a db/service schema
+            </aside>
+          </section>
+          <section>
+            <h2>scala.meta</h2>
+              <ul>
+                <li>executed at compile time with compiler plugin</li>
+                <li>DSL to parse/transform/generate code</li>
+                <li>macro wired up with annotation on any block of code</li>
+              </ul>
+            <aside class="notes">
+              pipeline: annotated blocks are parsed into the scala.meta DSL and you can manipulate them <br/>
             </aside>
           </section>
           <section>
             <h2>objective for this talk</h2>
             <ul>
-              <li><b>understand</b>: basics of scala.meta, code pipeline</li>
+              <li><b>understand</b>: basics of scala.meta and it's limitations</li>
               <li><b>believe</b>: easier to write/debug/maintain than old macros</li>
               <li><b>encourage</b>: write new style macros, use libs that use scala.meta</li>
             </ul>
             <aside class="notes">
-              pipeline: annotated blocks are parsed into the scala.meta DSL and you can manipulate them
+              Ask: who has used ever written an old style macro? <br/>
+              Who is still maintaining it? <br/>
+              Who likes doing that?
             </aside>
           </section>
           <section>
             <h2>old style macros will be phased out</h2>
             <ul>
               <li>hard to write and debug, many rough edges</li>
-              <li>scala.meta will replace them</li>
-              <li>already works with 2.11, 2.12, dotty and scala.js</li>
+              <li>scala.meta macros will replace them</li>
+              <li>works with 2.11, 2.12, dotty, scala.js, scala-native</li>
             </ul>
             <aside class="notes">
               announced last year at ScalaDays <br/> <br/>
               that's a good thing<br/> <br/>
-              scala.native should follow shortly<br/> <br/>
+              black box / white box macros
             </aside>
           </section>
           <section>
@@ -119,7 +137,9 @@
           <section>
             <h2>feature: code generation</h2>
             <ul>
-              <li>e.g. serialiser and domain class generator</li>
+              <li>domain class generator</li>
+              <li>performance metrics, logging</li>
+              <li>serialisation macro</li>
               <li>not enough documentation/examples/libs available</li>
             </ul>
             <aside class="notes">
@@ -145,8 +165,9 @@
             </code></pre>
             <aside class="notes">
               Ok, so how does it work? Here's the plumbing you need to do. Fairly simple.<br/> <br/>
-              inline/meta are becoming new keywords <br/> <br/>
-              defn is the definition of whatever got annotated, in the scala.meta adt (next slide)<br/>
+              inline/meta are becoming new keywords <br/> 
+              defn is the definition of whatever got annotated, in the scala.meta adt (next slide)<br/><br/>
+              (Strictly speaking, meta is not a keyword, but effectively it is)<br/>
             </aside>
           </section>
           <section>
@@ -154,9 +175,9 @@
             first port of call for deconstruction
 
             <pre><code data-trim class="scala">
-            // Different types of Name, just wrapping String
-            trait Type.Name(value: String)
-            trait Term.Name(value: String)
+            // Different namespaces for names
+            trait Type.Name(value: String) // type name, e.g. List.type
+            trait Term.Name(value: String) // expression, e.g. List companion object
             </code></pre>
 
             <pre><code data-trim class="scala">
@@ -172,9 +193,11 @@
               tparams: Seq[Type.Param], body: Type)
             </code></pre>
             <aside class="notes">
-              In some sense, scala.meta is just another scala library<br/><br/>
-              easy to convert between the different X.Name<br/><br/>
+              In some sense, scala.meta is just another scala library, so it makes sense to familiarise ourselves with the ADT.<br/><br/>
+              It's good to have Term.Name and Type.Name in different namespaces, however it's easy to convert between the different X.Name<br/><br/>
               Code pipeline: get scala.meta ADT, return scala.meta ADT<br/><br/>
+
+              scaladoc for trees: file:///home/mp/tmp/scalameta-trees-docs/index.html
             </aside>
           </section>
           <section>
@@ -185,7 +208,7 @@
               <li>reference documentation at <a href="https://github.com/scalameta/scalameta/blob/master/notes/quasiquotes.md">notes/quasiquotes.md</a></li>
             </ul>
             <aside class="notes">
-              took over the good parts from old style macros<br/><br/>
+              quasiquotes came from scala.reflect <br/>
             </aside>
           </section>
           <section>
@@ -227,11 +250,11 @@
             <h2>special quasiquote interpolators</h2>
             to resolve ambiguities
             <pre><code data-trim class="scala">
-              q"String"  //Term.Name
-              t"String"  //Type.Name
-              mod"final" //Mod
+              q"List"  //Term.Name: List companion object
+              t"List"  //Type.Name: List type
             </code></pre>
             <aside class="notes">
+              Term == Expression
               param, t, ... -> sometimes the quasiquotes are ambiguous (e.g. Type and Name)<br/><br/>
             </aside>
           </section>
@@ -245,9 +268,43 @@
             <li>build generic serialiser: class ⇒ Map[String, Any]</li>
             <li>maybe: domain class generator</li>
           </ul>
-          <p>
-            <a href="https://github.com/mpollmeier/scalameta-tutorial-scaladays">github.com/mpollmeier/scalameta-tutorial-scaladays</a>
-          </p>
+        </section>
+
+        <section>
+          <!-- <h2>scalameta-serialiser</h2> -->
+          <pre><code data-trim class="scala">
+          import scala.meta.serialiser._
+              
+          object Foo { def apple = "bar"}
+
+          @mappable case class Foo[A](
+            i: Option[Int] = Some(42),
+            @mappedTo("aMapped") a: A,
+            @nullable s: String) {
+            def banana = i.get
+          }
+
+          Foo(a = true, s = "bar").toMap
+          // returns Map(i -> 42, aMapped -> true, s -> bar)
+          Foo.fromMap(Map("i" -> 42, "aMapped" -> true, "s" -> "bar"))
+          Foo.fromMap(Map("aMapped" -> true))
+          </code></pre>
+          
+          <a href="https://github.com/mpollmeier/scalameta-serialiser">github.com/mpollmeier/scalameta-serialiser</a>
+          <aside class="notes">
+            was born when I rewrote gremlin-scala serialiser<br/>
+            I thought it makes sense to factor this out, maintenance can be shared<br/>
+            Generates seraliser / deserialiser<br/><br/>
+
+            keeps existing companion object, injects the generated typeclasses<br/>
+            type parameters of annotated class<br/>
+            map class members to different names: @mappedTo("iMapped") i: Int<br/>
+            mark class members as nullable: @nullable nullableValue: String<br/>
+            Option types<br/>
+            default values<br/>
+            keeps existing body of the annotated class<br/> <br/>
+            inject your own parameters for later use, useful when using this in a library: @mappable(Map("param1" -> "value1"))<br/>
+          </aside>
         </section>
 
         <section>
@@ -296,54 +353,55 @@
             </aside>
           </section>
 
-          <section>
-            forward reference over definition also applies to defs
-            <pre><code data-trim class="scala">
-              val b = a + 1
-              def a = 5
-              [error] forward reference extends over definition of value b
-              [error]         val b = a + 1
-              [error]                 ^
-            </code></pre>
-            <aside class="notes">
-              @nullable is available as a mod for the member
-            </aside>
-          </section>
         </section>
 
         <section>
-          <h2>scalameta-serialiser</h2>
-          <pre><code data-trim class="scala">
-          import scala.meta.serialiser._
-              
-          object Foo { def apple = "bar"}
+          <section>
+            <h2>Smallprint (*)</h2>
+          </section>
 
-          @mappable case class Foo[A](
-            @mappedTo("iMapped") i: Option[Int] = Some(42),
-            @nullable a: A) {
-            def banana = i.get
-          }
+          <section>
+            REPL expansion of macros doesn't work yet
+            <pre><code data-trim class="scala">
+              sbt console
+              [error] error while loading Object,
+              [error] Missing dependency 'object scala in compiler mirror'
+            </code></pre>
+            <p style="font-size: 70%">
+              Workaround: factor out generated code into separate project <br/>
+              Discussion at scalameta/paradise <a href="https://github.com/scalameta/paradise/issues/10">#10</a>
+            </p>
+            <aside class="notes">
+            </aside>
+          </section>
 
-          val keyValues = Foo(Some(1), "someValue").toMap
-          Foo.fromMap(keyValues)
-          </code></pre>
-          
-          <a href="https://github.com/mpollmeier/scalameta-serialiser">https://github.com/mpollmeier/scalameta-serialiser</a>
-          <aside class="notes">
-            was born when I rewrote gremlin-scala serialiser<br/>
-            I thought it makes sense to factor this out, maintenance can be shared<br/>
-            Generates seraliser / deserialiser<br/><br/>
+          <section>
+            <h2> Intellij </h2>
+            <ul>
+              <li> scala plugin: change to nightly </li>
+              <li> code completion works, allows to expand macro </li>
+              <li> some help for writing macro, incl. quasiquotes </li>
+              <li> only works if used from a separate build file </li>
+            </ul>
+            <img src="img/intellij.png" height="300px"/><br/>
+            <aside class="notes">
+              they reimplement the type checker (mikhail) - hard work
+            </aside>
+          </section>
 
-            keeps existing companion object, injects the generated typeclasses<br/>
-            type parameters of annotated class<br/>
-            map class members to different names: @mappedTo("iMapped") i: Int<br/>
-            mark class members as nullable: @nullable nullableValue: String<br/>
-            Option types<br/>
-            default values<br/>
-            keeps existing body of the annotated class<br/> <br/>
-            inject your own parameters for later use, useful when using this in a library: @mappable(Map("param1" -> "value1"))<br/>
+          <section>
+            <h2> Ensime </h2>
+            <ul>
+              <li> code completion of expanded macro works </li>
+              <li> inside meta block: currently no help (used to work) </li>
+            </ul>
+            <img src="img/ensime.png" height="300px"/>
+            <aside class="notes">
+              presentation compiler - should just work <br/>
+              scala ide: also presentation compiler. not much luck, but didn't try very hard
+            </aside>
+          </section>
 
-          </aside>
         </section>
 
         <section>
@@ -351,22 +409,22 @@
           <ul>
             <li>great metaprogramming DSL</li>
             <li>support for almost all scala platforms</li>
+            <li>some rough edges</li>
+            <li>IDE support needs to mature further</li>
             <li>active & responsive community</li>
-            <li>better IDE support would be good</li>
-            <li>use it for new macros and replace existing ones</li>
-            <li>don't be afraid to use libs that use scala.meta</li>
+            <li>scala.meta needs a logo</li>
           </ul>
           <aside class="notes">
-            nailed it <br/>
             stable: upgrade von 1.3.0 through to 1.7.0 without changes<br/><br/>
             currently: lot's of println debugging<br/><br/>
-            IDE support: only for writing macro, ensime doesn't dereference the macro internals of scalameta (jumping to definitions within meta) -> println debugging, but with good help from compiler, like in live coding session<br/><br/>
-            scala.meta needs a logo! <br/> <br/>
+            rough edges: e.g. repl expansion doesn't work -> in serialiser, can configure with debug flag, will print generated code <br/> <br/>
+            pros and cons in comparison with Shapeless: different tradeoffs. Map[String, Any], performance (macro is faster) <br/> <br/>
+            scaladoc should be hosted online
           </aside>
         </section>
 
 				<section>
-					<h2>questions?</h2>
+					<h2>Thank you!</h2>
           <a href="http://www.michaelpollmeier.com">www.michaelpollmeier.com</a><br/>
           <a href="https://github.com/mpollmeier">github.com/mpollmeier</a><br/>
           <a href="https://twitter.com/pollmeier">twitter.com/pollmeier</a><br/>
@@ -418,6 +476,7 @@
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
+        slideNumber: true,
 
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
