@@ -17,6 +17,7 @@
         box-shadow: none;
       }
       .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { text-transform: none; }
+      .reveal li { font-size: 90%;}
     </style>
 
 		<!-- Theme used for syntax highlighting of code -->
@@ -38,16 +39,11 @@
           <h2>code generation with scala.meta</h2>
           <aside class="notes">
             Welcome everybody, my name is Michael Pollmeier and
-            in this talk we'll explore code generation with scala.meta <br/> <br/>
+            in this talk we'll explore scala.meta, more specifically code generation with scala.meta<br/> <br/>
 
-            You'll learn how nice and simple the scala.meta DSL is and hopefully want to explore further yourself<br/> <br/>
-
-            I'll try to cover all experience levels, not just scala experts<br/>
+            I'll try to cover all experience levels, not just scala experts.<br/>
             Can I get a quick show of hands: who's been doing scala for lt1 year? lt2? lt3? <br/>
             Not everybody might not understand every detail, but I'll throw in some simple explanations so you get the concepts, and please ask questions as we go<br/> <br/>
-
-            Who here has attended Pathikrits talk yesterday? <br/>
-            You'll find some overlap, but there's also a lot of things we do differently. 
           </aside>
         </section>
 
@@ -61,46 +57,19 @@
           <a href="https://twitter.com/pollmeier">@pollmeier</a>
           
           <aside class="notes">
-            I'm from Germany originally, live in NZ with my wife and daughter. Have been there 5 years<br/><br/>
-            I'm an apache member and tinkerpop committer, and the author of gremlin-scala, which uses the power of the scala typesystem to help you build graph database queries.<br/><br/>
-            ShiftLeft: Silicon Valley security startup: static code analysis using graph databases, runtime component<br/><br/>
+            Alright. Just a few words about myself: I'm from Germany originally, but live in NZ and work for company in silicon valley.<br/><br/>
+            That company is ShiftLeft, and we do static code analysis using graph databases.<br/><br/>
+            I'm an apache member and tinkerpop committer. And the author of gremlin-scala, which uses scalas typesystem to help you build typesafe graph database queries.<br/><br/>
           </aside>
         </section>
 
         <section>
           <section>
-            <h2>metaprogramming</h2>
-              <ul>
-                <li>code that manipulates code</li>
-                <li>verify code: against a schema (db, endoint)</li>
-                <li>amend code: performance metrics, logging</li>
-                <li>generate code</li>
-                <ul>
-                  <li>domain model to case classes</li>
-                  <li>serialisation macro</li>
-                  <li>...</li>
-                </ul>
-              </ul>
-            <aside class="notes">
-            </aside>
-          </section>
-          <section>
-            <h2>scala.meta</h2>
-              <ul>
-                <li>executed at compile time with compiler plugin</li>
-                <li>DSL to parse/transform/generate code</li>
-                <li>macro wired up with annotation on any block of code</li>
-              </ul>
-            <aside class="notes">
-              pipeline: annotated blocks are parsed into the scala.meta DSL and you can manipulate them <br/>
-            </aside>
-          </section>
-          <section>
             <h2>objective for this talk</h2>
             <ul>
               <li><b>understand</b>: basics of scala.meta and it's limitations</li>
-              <li><b>believe</b>: easier to write/debug/maintain than old macros</li>
-              <li><b>encourage</b>: write new style macros, use libs that use scala.meta</li>
+              <li><b>believe</b>: easier to write/debug than old macros</li>
+              <li><b>encourage</b>: use and write new style macros</li>
             </ul>
             <aside class="notes">
               Ask: who has used ever written an old style macro? <br/>
@@ -122,6 +91,36 @@
             </aside>
           </section>
           <section>
+            <h2>metaprogramming</h2>
+              <ul>
+                <li>code that manipulates code</li>
+                <li>verify code: against a schema (db, endoint, style)</li>
+                <li>amend code: performance metrics, logging</li>
+                <li>generate code</li>
+                <ul>
+                  <li>domain model to case classes</li>
+                  <li>serialisation macro</li>
+                  <li>...</li>
+                </ul>
+              </ul>
+            <aside class="notes">
+              code style guides <br/>
+              hooks for performance metrics
+            </aside>
+          </section>
+          <section>
+            <h2>scala.meta</h2>
+              <ul>
+                <li>metaprogramming library</li>
+                <li>executed at compile time using a compiler plugin</li>
+                <li>DSL to parse/transform/generate code</li>
+                <li>macro wired up with annotation on any block of code</li>
+              </ul>
+            <aside class="notes">
+              pipeline: annotated blocks are parsed into the scala.meta DSL and you can manipulate them <br/>
+            </aside>
+          </section>
+          <section>
             <h2> feature: code parsing </h2>
             <ul>
               <li>complete AST, including comments</li>
@@ -136,14 +135,18 @@
           </section>
           <section>
             <h2>feature: code generation</h2>
-            <ul>
-              <li>domain class generator</li>
-              <li>performance metrics, logging</li>
-              <li>serialisation macro</li>
-              <li>not enough documentation/examples/libs available</li>
-            </ul>
+            e.g. generic serialiser
+            <pre><code data-trim class="scala">
+              case class Customer(name: String, yearOfBirth: Int)
+            </code></pre>
+
+            <pre><code data-trim class="scala">
+              object Customer {
+                def toMap(c: Customer): Map[String, Any] = ???
+              }
+            </code></pre>
             <aside class="notes">
-              countless use cases<br/><br/>
+              countless other use cases: domain class generator, performance metrics, logging
               my initial motivation to check out scala.meta<br/><br/>
               replace gremlin-scala serialiser macro that someone contributed - I found it quite hard to extend and maintain<br/><br/>
             </aside>
@@ -175,12 +178,6 @@
             first port of call for deconstruction
 
             <pre><code data-trim class="scala">
-            // Different namespaces for names
-            trait Type.Name(value: String) // type name, e.g. List.type
-            trait Term.Name(value: String) // expression, e.g. List companion object
-            </code></pre>
-
-            <pre><code data-trim class="scala">
             // Definition of object, class, type etc.
             trait Defn.Object(mods: Seq[Mod], name: Term.Name,
               templ: Template)
@@ -192,6 +189,13 @@
             trait Defn.Type(mods: Seq[Mod], name: Type.Name,
               tparams: Seq[Type.Param], body: Type)
             </code></pre>
+
+            <pre><code data-trim class="scala">
+            // Different namespaces for names
+            trait Type.Name(value: String) // type name, e.g. List.type
+            trait Term.Name(value: String) // expression, e.g. List companion object
+            </code></pre>
+
             <aside class="notes">
               In some sense, scala.meta is just another scala library, so it makes sense to familiarise ourselves with the ADT.<br/><br/>
               It's good to have Term.Name and Type.Name in different namespaces, however it's easy to convert between the different X.Name<br/><br/>
@@ -203,12 +207,12 @@
           <section>
             <h2>quasiquotes</h2>
             <ul>
+              <li>quasiquotes came from scala.reflect</li>
               <li>DSL to construct/deconstruct scala.meta ADT</li>
-              <li>more concise, yet further away from a normal library</li>
+              <li>first port of call for construction</li>
               <li>reference documentation at <a href="https://github.com/scalameta/scalameta/blob/master/notes/quasiquotes.md">notes/quasiquotes.md</a></li>
             </ul>
             <aside class="notes">
-              quasiquotes came from scala.reflect <br/>
             </aside>
           </section>
           <section>
@@ -254,7 +258,7 @@
               t"List"  //Type.Name: List type
             </code></pre>
             <aside class="notes">
-              Term == Expression
+              Term == Expression <br/>
               param, t, ... -> sometimes the quasiquotes are ambiguous (e.g. Type and Name)<br/><br/>
             </aside>
           </section>
@@ -264,9 +268,8 @@
           <h2>live coding</h2>
           <ul>
             <li>understand code pipeline</li>
-            <li>making the same steps a new user would take</li>
+            <li>make the same steps a new user would take</li>
             <li>build generic serialiser: class ⇒ Map[String, Any]</li>
-            <li>maybe: domain class generator</li>
           </ul>
         </section>
 
@@ -284,8 +287,8 @@
             def banana = i.get
           }
 
-          Foo(a = true, s = "bar").toMap
-          // returns Map(i -> 42, aMapped -> true, s -> bar)
+          Foo.toMap(Foo(a = true, s = "bar"))
+          // Map(i -> 42, aMapped -> true, s -> bar)
           Foo.fromMap(Map("i" -> 42, "aMapped" -> true, "s" -> "bar"))
           Foo.fromMap(Map("aMapped" -> true))
           </code></pre>
@@ -381,7 +384,6 @@
               <li> scala plugin: change to nightly </li>
               <li> code completion works, allows to expand macro </li>
               <li> some help for writing macro, incl. quasiquotes </li>
-              <li> only works if used from a separate build file </li>
             </ul>
             <img src="img/intellij.png" height="300px"/><br/>
             <aside class="notes">
@@ -401,17 +403,17 @@
               scala ide: also presentation compiler. not much luck, but didn't try very hard
             </aside>
           </section>
-
         </section>
 
         <section>
           <h2>final thoughts</h2>
           <ul>
             <li>great metaprogramming DSL</li>
-            <li>support for almost all scala platforms</li>
+            <li>support for all scala platforms</li>
             <li>some rough edges</li>
-            <li>IDE support needs to mature further</li>
+            <li>IDE support needs to mature</li>
             <li>active & responsive community</li>
+            <li>scaladoc should be hosted online</li>
             <li>scala.meta needs a logo</li>
           </ul>
           <aside class="notes">
@@ -419,19 +421,22 @@
             currently: lot's of println debugging<br/><br/>
             rough edges: e.g. repl expansion doesn't work -> in serialiser, can configure with debug flag, will print generated code <br/> <br/>
             pros and cons in comparison with Shapeless: different tradeoffs. Map[String, Any], performance (macro is faster) <br/> <br/>
-            scaladoc should be hosted online
           </aside>
         </section>
 
 				<section>
-					<h2>Thank you!</h2>
           <a href="http://www.michaelpollmeier.com">www.michaelpollmeier.com</a><br/>
           <a href="https://github.com/mpollmeier">github.com/mpollmeier</a><br/>
           <a href="https://twitter.com/pollmeier">twitter.com/pollmeier</a><br/>
-          <img src="img/rate-this-session.png" height="300px" />
           <aside class="notes">
             github: live coding repo, scalameta-serialiser, gremlin-scala
             blog: post about scala.meta, link to this presentation
+          </aside>
+				</section>
+
+				<section>
+          <img src="img/rate-this-session.png" height="500px" />
+          <aside class="notes">
           </aside>
 				</section>
 
