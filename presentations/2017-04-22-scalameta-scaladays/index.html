@@ -57,9 +57,10 @@
           <a href="https://twitter.com/pollmeier">@pollmeier</a>
           
           <aside class="notes">
-            Alright. Just a few words about myself: I'm from Germany originally, but live in NZ and work for company in silicon valley.<br/><br/>
-            That company is ShiftLeft, and we do static code analysis using graph databases.<br/><br/>
-            I'm an apache member and tinkerpop committer. And the author of gremlin-scala, which uses scalas typesystem to help you build typesafe graph database queries.<br/><br/>
+            Alright. Just a few words about myself: I'm from Germany originally, but live in NZ (so please excuse my accent) and work for company in silicon valley.<br/><br/>
+            I'm an apache member and tinkerpop committer. Tinkerpop is basically the jdbc of graph databases. And I'm the author of gremlin-scala, which uses scalas typesystem to help you build typesafe graph database queries on the tinkerpop stack.<br/>
+            I was pleased to hear that some people at the conference actually use gremlin-scala, and they weren't angry at me. <br/><br/>
+            I work for ShiftLeft, we do static code analysis using graph databases to find vulnerabilities.<br/><br/>
           </aside>
         </section>
 
@@ -67,12 +68,12 @@
           <section>
             <h2>objective for this talk</h2>
             <ul>
-              <li><b>understand</b>: basics of scala.meta and it's limitations</li>
+              <li><b>understand</b>: basics of scala.meta and the project status</li>
               <li><b>believe</b>: easier to write/debug than old macros</li>
               <li><b>encourage</b>: use and write new style macros</li>
             </ul>
             <aside class="notes">
-              Ask: who has used ever written an old style macro? <br/>
+              after slide: Ask: who has used ever written an old style macro? <br/>
               Who is still maintaining it? <br/>
               Who likes doing that?
             </aside>
@@ -175,8 +176,6 @@
           </section>
           <section>
             <h2>scala.meta ADT</h2>
-            first port of call for deconstruction
-
             <pre><code data-trim class="scala">
             // Definition of object, class, type etc.
             trait Defn.Object(mods: Seq[Mod], name: Term.Name,
@@ -209,7 +208,6 @@
             <ul>
               <li>quasiquotes came from scala.reflect</li>
               <li>DSL to construct/deconstruct scala.meta ADT</li>
-              <li>first port of call for construction</li>
               <li>reference documentation at <a href="https://github.com/scalameta/scalameta/blob/master/notes/quasiquotes.md">notes/quasiquotes.md</a></li>
             </ul>
             <aside class="notes">
