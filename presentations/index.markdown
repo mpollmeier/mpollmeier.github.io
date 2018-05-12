@@ -7,6 +7,7 @@ title: Presentations
   <h1>Presentations</h1>
 
   <ul>
+    <!-- <li> 15/05/2018: Type safety in the world of graph databases (ScalaDays Berlin): <a href="2018-05-16-gremlin-scaladays">slides</a></li> -->
     <li> 21/04/2017: Introduction to scala.meta (ScalaDays Chicago): <a href="https://www.youtube.com/watch?v=l88-ljjtLO0">video</a> and <a href="2017-04-22-scalameta-scaladays">slides</a></li>
     <li> 19/02/2016: <a href="2016-02-19-graphdbs">Gremlin-Scala for TinkerPop3</a></li>
     <li> 19/02/2016: <a href="2016-02-19-shapeless.md">Practical(ly) shapeless (live coding)</a></li>
