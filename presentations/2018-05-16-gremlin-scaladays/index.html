@@ -24,6 +24,10 @@
         background: #292929;
         box-shadow: none;
       }
+
+      .shadow {
+        box-shadow: 3px 3px 3px #aaa !important;
+      }
     </style>
 
 		<!-- Printing and PDF exports -->
@@ -52,9 +56,9 @@
             </aside>
           </section>
           <section>
-            <!-- <h2>Agenda</h2> -->
+            <h2>Agenda</h2>
             <ol>
-              <li>graphs: what and why</li>
+              <li>graphs: what and when</li>
               <li>query languages</li>
               <li>type safety with gremlin-scala</li>
             </ol>
@@ -94,28 +98,12 @@ WHERE person.id = 1
             </code></pre>
 
             <aside class="notes" data-markdown>
-              * don't focus on the details here - what I wanted to show is that for such a simple task we need a lot of ceremony
-              * also gets slow when following multiple relations:
-                * global index: lookup time dependent on index size: O(log(n)) complexity - two in this instance
-                * node-centric index: O(1) constant time
-              * imagine how it looks when we're asking for pizza recommendations: which pizzas do people like, who also like the pizzas alice likes?
+              * don't focus on details - lot's of ceremony, ugly
+              * global index: O(log(n)), node-centric index: O(1)
+              * how about recommendations: which pizzas do people like, who also like the pizzas alice likes?
+              * schema must typically be defined up front
               * constant juggle: normalization (clean schema) vs. performance (wide rows)
               * object-relational impedance mismatch: if a value class has a `list` property, you can either store that list in a separate table, or encode it in some form (json, proto, ...)
-            </aside>
-          </section>
-
-          <section>
-            <h2>Property Graph</h2>
-            <img src="img/property-graph.png" height="400px"/>
-            <aside class="notes" data-markdown>
-              * quick definition: when I say "graph" I actually mean "property graph"
-              * vertices connected by directed edges, each of which have one label and 0..n properties
-              * simple, natural model
-              * schema typically optional: no schema for exploratory stuff, define schema once domain is better understood
-
-              Consider graphs for:
-              * their simpler model, no fight with object-relational impedance mismatch
-              * highly relational domains
             </aside>
           </section>
 
@@ -125,13 +113,30 @@ WHERE person.id = 1
             <aside class="notes" data-markdown>
               * archetypical motivational example: social network, finding friends of friends
               * 1M people, each with ~50 friends
-              * img: attention, propaganda. from the free oreilly graphdb book (written by neo4j). 
+              * propaganda alert: from the free oreilly graphdb book (written by neo4j)
               * you can optimise your data in a relational db to workaround that, but you get this for free in a graphdb
             </aside>
           </section>
 
           <section>
-            <img src="img/cpg.png" height="450px" />
+            <h2>Property Graph</h2>
+            <img src="img/property-graph.png" height="400px" class="shadow"/>
+            <aside class="notes" data-markdown>
+              * quick definition: when I say "graph" I actually mean "property graph"
+              * vertices connected by directed edges, each of which have one label and 0..n properties
+              * simple, natural model
+              * schema typically optional: no schema for exploratory stuff, define schema once domain is better understood
+
+              Great for
+              * simpler model
+              * ad hoc adding of relationships without a burdon
+              * no fight with object-relational impedance mismatch
+              * highly relational domains
+            </aside>
+          </section>
+
+          <section>
+            <img src="img/cpg.png" height="450px" class="shadow"/>
             <aside class="notes" data-markdown>
               * example, to get an idea where a graph makes complete sense
               * code property graph
@@ -162,7 +167,7 @@ MATCH (Actor {name: 'Woody Allen'})
 WHERE movie.year > 2010
 RETURN movie
             </code></pre>
-            <img src="img/neo4j-bg.png" height="100px" />
+            <img src="img/neo4j-bg.png" height="100px" class="shadow"/>
             <aside class="notes" data-markdown>
               * get woody allen movies past 2010
               * declarative, similar to how you would draw it
@@ -186,7 +191,7 @@ WHERE
     FILTER ( !bound(?age) || ?age > 24 )
 }
             </code></pre>
-            <img src="img/sparql.png" height="150px"/>
+            <img src="img/sparql.png" height="150px" class="shadow"/>
             <aside class="notes" data-markdown>
               * get names of people older than 24 years
               * for RDF (Resource Description Framework): making statements about resources, in expressions of the form subject–predicate–object, known as triples.
@@ -198,9 +203,8 @@ WHERE
           <section>
             <h2>Gremlin (Apache TinkerPop)</h2>
             <pre><code data-trim class="groovy">
-g.V().has("name","gremlin")
-     .out("friend")
-     .out("friend")
+g.V().has("name", "Alice")
+     .out("likes")
      .values("name")
             </code></pre>
             <img src="img/tinkerpop-splash.png" height="250px"/>
@@ -217,8 +221,8 @@ g.V().has("name","gremlin")
 
         <section>
           <section>
-            <img src="img/gremlin-scala-logo.png" height="200px"/><br/>
-            <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a>
+            <img src="img/gremlin-scala-logo.png" height="200px" class="shadow"/><br/>
+            <a href="https://github.com/mpollmeier/gremlin-scala">github.com/mpollmeier/gremlin-scala</a>
             <aside class="notes" data-markdown>
               * scala wrapper for gremlin-java
               * scala friendly function syntax
@@ -234,8 +238,11 @@ g.V().has("name","gremlin")
               import gremlin.scala._
               implicit val graph = TinkerGraph.open.asScala
             </code></pre>
+            <img src="img/gremlin-chef.png" height="150px"/><br/>
+            <a href="https://github.com/mpollmeier/gremlin-scala-examples">github.com/mpollmeier/gremlin-scala-examples</a>
             <aside class="notes" data-markdown>
               * reference to graph - could be local (in memory, backed by fs), remote
+              * gremlin-scala-examples with scaffolding for many graph dbs
             </aside>
           </section>
           <section>
@@ -251,6 +258,7 @@ object LikesEdge {
   val howMuch = Key[Double]("howMuch")
 }
             </code></pre>
+            <img src="img/gremlin-quill.png" height="150px"/>
             <aside class="notes" data-markdown>
               * graph db may or may not enforce the same schema
               * define domain schema once, use everywhere to get help from compiler/IDE and type safety and IDE completion
@@ -267,6 +275,7 @@ object LikesEdge {
               alice --- "likes" --> tonno
               alice --- ("likes", howMuch -> 3) --> tonno
             </code></pre>
+            <img src="img/property-graph.png" height="200px" class="shadow"/>
             <aside class="notes" data-markdown>
               * properties: type safe: IDE help / compiler validation
               * edges can be the other way around, or bidirectional
@@ -308,20 +317,37 @@ object LikesEdge {
               g.V(1) // GremlinScala[Vertex]
               g.V(1).headOption // Option[Vertex]
             </code></pre>
+            <img src="img/graph-computing.png" class="shadow" style="background: white; border: 4px solid white;" height="150px"/>
             <aside class="notes" data-markdown>
               * `g` convention for naming the TraversalSource
               * lazy: execute with `toList`, `toSet`, `headOption` etc.
             </aside>
           </section>
           <section>
-            <h2>out step</h2>
+            <h2>out/outE</h2>
             <pre><code data-trim class="scala">
 g.V(1).out("likes") // GremlinScala[Vertex]
             </code></pre>
             <pre><code data-trim class="scala">
 g.V(1).outE("likes").inV // GremlinScala[Vertex]
             </code></pre>
+            <img src="img/gremlin-edge.png" height="150px"/>
             <aside class="notes" data-markdown>
+            </aside>
+          </section>
+          <section>
+            <h2>out/in</h2>
+            <pre><code data-trim class="scala">
+              g.V(1)         // Alice
+               .out("likes") // pizzas Alice likes
+               .in("likes")  // people who like the same pizzas
+               .out("likes") // pizzas those people like
+            </code></pre>
+            <img src="img/gremlin-edge.png" height="150px"/>
+            <aside class="notes" data-markdown>
+              * Which pizzas do people like, who also like the pizzas Alice likes?
+              * without the comments, this would be a one liner
+              * sql would hardly fit on this slide
             </aside>
           </section>
           <section>
@@ -329,6 +355,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
             <pre><code data-trim class="scala">g.V.hasLabel("person") // GremlinScala[Vertex]</code></pre>
             <pre><code data-trim class="scala">g.V.has(name) // GremlinScala[String]</code></pre>
             <pre><code data-trim class="scala">g.V.has(age, P.between(25, 35)) // GremlinScala[Int]</code></pre>
+            <img src="img/gremlin-french.png" height="150px"/>
             <aside class="notes" data-markdown>
               * IDE helps with types
               * P: Predicate: only compiles with two Ints
@@ -348,6 +375,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
                 g.V.has(age).groupCount(By(age))
                 // GremlinScala[Map[Int, Long]]
             </code></pre>
+            <img src="img/gremlin-library.png" height="150px"/>
             <aside class="notes" data-markdown>
               * degree: how many outgoing edges from a specific vertex
             </aside>
@@ -359,6 +387,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
                 .repeat(_.out)
                 .until(_.outE.count.is(P.eq(0)))
             </code></pre>
+            <img src="img/gremlin-hindu.png" height="150px"/>
             <aside class="notes" data-markdown>
               * traverse from one starting node until the outermost vertices in the graph, which don't have any outgoing edges any more: discover the new frontier
             </aside>
@@ -372,6 +401,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
                 .select
               // GremlinScala[(Vertex, Edge, Double)]
             </code></pre>
+            <img src="img/gremlin-mozart.png" height="150px"/>
             <aside class="notes" data-markdown>
               * selecting multiple things along the way
               * groovy/java would return Array[Object] (at compile time)
@@ -379,6 +409,9 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
               * works by storing the labelled types in a type member as an HList
             </aside>
           </section>
+        </section>
+
+        <section>
           <section>
             <h2>catch errors at compile time</h2>
             <pre><code data-trim class="scala">
@@ -390,6 +423,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
             <pre><code data-trim class="scala">
               g.V.value(name).mean
             </code></pre>
+            <img src="img/gremlin-lab-coat.png" height="150px"/>
             <aside class="notes" data-markdown>
               * prevent families of illegal queries
               * dynamic languages can't catch these
@@ -398,12 +432,52 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           </section>
 
           <section>
+            <h2>custom dsl</h2>
+            <pre><code data-trim class="scala">
+              g.person("Alice")
+               .likes
+               .withAtLeast(3)
+              // PizzaSteps
+            </code></pre>
+            instead of
+            <pre><code data-trim class="scala">
+              g.V.hasLabel("person")
+               .has(name, "Alice")
+               .outE("likes").has(howMuch, P.gte(3))
+               .inV
+              // GremlinScala[Vertex]
+            </code></pre>
+            <img src="img/gremlin-grad.png" class="shadow" height="150px"/>
+            <aside class="notes" data-markdown>
+              * define your own custom dsl with gremlin.scala.dsl
+              * in practice, PizzaSteps and GremlinScala[Vertex] are equivalent, it's just a nice DSL on top
+              * as/select etc. available, but not all steps yet (purely because I didn't have the need yet)
+            </aside>
+          </section>
+
+          <!-- <section> -->
+          <!--   <h2>ShiftLeft Tinkergraph</h2> -->
+          <!--   <a href="https://github.com/ShiftLeftSecurity/tinkergraph-gremlin">github.com/ShiftLeftSecurity/tinkergraph-gremlin</a><br/> -->
+          <!--   <ul> -->
+          <!--     <li>70% less memory</li> -->
+          <!--     <li>strict schema validation</li> -->
+          <!--   </ul> -->
+          <!--   <br/> -->
+          <!--   <img src="img/gremlin-coins.png" height="150px"/> -->
+          <!--   <aside class="notes" data-markdown> -->
+          <!--     * TinkerGraph: reference implementation, in memory -->
+          <!--     * we've open sourced our specialized version of TinkerGraph: 70% less memory, strict schema validation -->
+          <!--   </aside> -->
+          <!-- </section> -->
+
+          <section>
             <h2>Downsides: Tinkerpop</h2>
             <ul>
               <li>db maturity</li>
               <li>db driver</li>
               <li>tooling</li>
             </ul>
+            <img src="img/gremlin-help-wanted.png" height="150px"/>
             <aside class="notes" data-markdown>
               * graph db maturity - rapidly expanding space, however mixed maturity
               * quality of db driver: query optimisation, automatic use of indices
@@ -412,49 +486,15 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
               * gremlin-scala: plenty of areas for improvement, help appreciated, and already got many great contributions
             </aside>
           </section>
-        </section>
 
-
-        <!-- Getting started -->
-        <section>
-          <section>
-            <!-- <img src="img/gse.png" height="450px"/> -->
-            <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a><br/>
-            <a href="https://github.com/mpollmeier/gremlin-scala-examples">https://github.com/mpollmeier/gremlin-scala-examples</a><br/>
-            <aside class="notes" data-markdown>
-            </aside>
-          </section>
-
-          <section>
-            <img src="img/tp-docs.png" height="450px"/>
-            <a href="http://tinkerpop.apache.org">http://tinkerpop.apache.org</a>
-            <aside class="notes" data-markdown>
-              * overview, getting started, motivation, steps, architecture
-              * links to user groups, contributor docs
-            </aside>
-          </section>
-
-          <section>
-            <h2>ShiftLeft Tinkergraph</h2>
-            <ul>
-              <li>70% less memory</li>
-              <li>strict schema validation</li>
-            </ul>
-            <br/>
-            <br/>
-            <a href="https://github.com/ShiftLeftSecurity/tinkergraph-gremlin">https://github.com/ShiftLeftSecurity/tinkergraph-gremlin</a><br/>
-            <aside class="notes" data-markdown>
-              * TinkerGraph: reference implementation, in memory
-              * we've open sourced our specialized version of TinkerGraph: 70% less memory, strict schema validation
-            </aside>
-          </section>
 
           <section>
             <h2>Summary</h2>
             <ul>
-              <li>graphs</li>
-              <li>gremlin-scala: typesafe dsl</li>
+              <li>graphs: why and when</li>
+              <li>typesafe query dsl</li>
               <li>nice DSL to create vertices and edges</li>
+              <li>build your custom DSL</li>
             </ul>
             <aside class="notes" data-markdown>
               * graphs: simpler model, better performance for connected data
@@ -462,6 +502,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
               * gremlin: api for local and remote graphs
               * Minimal runtime overhead - only allocates additional instances if absolutely necessary
               * Nothing is hidden away, you can always easily access the underlying Gremlin-Java objects if needed, e.g. to access graph db specifics things like indexes
+              * TP has great artwork
             </aside>
           </section>
 
@@ -472,14 +513,16 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           </section>
 
           <section>
-            <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a><br/>
-            <a href="https://github.com/mpollmeier/gremlin-scala-examples">https://github.com/mpollmeier/gremlin-scala-examples</a><br/>
-            <a href="http://tinkerpop.apache.org">http://tinkerpop.apache.org</a>
-            <a href="https://github.com/ShiftLeftSecurity/tinkergraph-gremlin">https://github.com/ShiftLeftSecurity/tinkergraph-gremlin</a><br/>
-            <a href="https://www.michaelpollmeier.com">https://www.michaelpollmeier.com</a><br/>
-            <a href="https://twitter.com/pollmeier"></a>
+            <a href="http://tinkerpop.apache.org">tinkerpop.apache.org</a>
+            <a href="https://github.com/mpollmeier/gremlin-scala">github.com/mpollmeier/gremlin-scala</a><br/>
+            <a href="https://www.michaelpollmeier.com">michaelpollmeier.com</a><br/>
+            <img src="img/gremlin-gym.png" height="150px"/><br/>
             <img src="img/shiftleft-logo.png" style="background: none" height="50px" />
             <aside class="notes" data-markdown>
+              * gremlin-scala-examples: scaffolding for different dbs
+              * overview, getting started, motivation, steps, architecture
+              * links to user groups, contributor docs
+              * blog and presentations (like this one)
             </aside>
           </section>
         </section>
