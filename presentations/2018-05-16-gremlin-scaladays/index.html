@@ -12,6 +12,20 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
 
+    <!-- custom css -->
+    <style media="screen" type="text/css">
+      .reveal section img {
+        border: none;
+        background: none;
+        box-shadow: none;
+      }
+
+      .reveal code {
+        background: #292929;
+        box-shadow: none;
+      }
+    </style>
+
 		<!-- Printing and PDF exports -->
 		<script>
 			var link = document.createElement( 'link' );
@@ -25,19 +39,32 @@
 		<div class="reveal">
 			<div class="slides">
         <section>
-          <h2>Type safety in the world of graph databases</h2>
-          
-          Michael Pollmeier<br/>
-          ShiftLeft
-          <aside class="notes" data-markdown>
-            * to be fair I'll mostly focus on a subset of the world, because that's the one I know best and it's the only one where you can get some type safety AFAIK
-            * I'm the author of gremlin-scala, so I'm clearly biased
-            * I work at shiftleft we do static code analysis using graph dbs to find security vulnerabilities, data leaks etc.
-            * we love open source (including the giving back part). if this stuff interests you, please get in touch, we're hiring in Berlin, San Francisco and remote
-          </aside>
+          <section>
+            <h2>Type safety in the world of graph databases</h2>
+
+            Michael Pollmeier<br/>
+            <img src="img/shiftleft-logo.png" style="background: none" height="50px" />
+            <aside class="notes" data-markdown>
+              * author of gremlin-scala
+              * I work at shiftleft we do static code analysis using graph dbs to find security vulnerabilities, data leaks etc.
+              * we love open source (including the giving back part). if this stuff interests you, please get in touch, we're hiring in Berlin, San Francisco and remote
+              * best to ask questions at the end (time and recording)
+            </aside>
+          </section>
+          <section>
+            <!-- <h2>Agenda</h2> -->
+            <ol>
+              <li>graphs: what and why</li>
+              <li>query languages</li>
+              <li>type safety with gremlin-scala</li>
+            </ol>
+            <aside class="notes" data-markdown>
+              * relational vs graph dbs
+              * leverage the scala compiler to help you writing queries
+            </aside>
+          </section>
         </section>
 
-        <!-- overview -->
         <section>
           <section>
             <h2>Relational db anyone?</h2>
@@ -45,7 +72,6 @@
             <aside class="notes" data-markdown>
               * when you first learned about databases, you were probably told that this is how a db looks like
               * tables, columns (properties), rows
-              * looks remarkably like punchcards
               * highly optimized, very mature, great tooling, everyone knows SQL
               * Most popular model for a reason, please use it 98% of the time
               * they have some fundamental downsides, interestingly esp. when it comes to managing relations
@@ -54,50 +80,67 @@
           </section>
 
           <section>
-            <h2>Joining tables</h2>
+            <h2>relations in sql</h2>
             <pre><code data-trim class="sql">
 SELECT pizza.name
 FROM Person as person
 JOIN Likes as likes ON person.id = likes.person
 JOIN Pizza as pizza ON likes.pizza = pizza.id AND
-WHERE person.id = 10
+WHERE person.id = 1
             </code></pre>
-            vs. (gremlin)
+            vs. gremlin
             <pre><code data-trim class="groovy">
-              g.V(10).out("likes").values("name")
+              g.V(1).out("likes").values("name")
             </code></pre>
 
             <aside class="notes" data-markdown>
-              * joins rely on using the same id between two tables
-              * sql get's ugly when following multiple relations: multiple joins
-              * can get slow when following multiple relations:
+              * don't focus on the details here - what I wanted to show is that for such a simple task we need a lot of ceremony
+              * also gets slow when following multiple relations:
                 * global index: lookup time dependent on index size: O(log(n)) complexity - two in this instance
                 * node-centric index: O(1) constant time
-              * constant juggle: normalization (clean schema) vs. performance (wide rows), rather than just representing like you would on paper
-              * also bad for representing objects/value classes: object-relational impedance mismatch
-                * i.e., if a value class has a `list` property, you can either store that list in a separate table, or encode it in some form (json, proto, ...)
+              * imagine how it looks when we're asking for pizza recommendations: which pizzas do people like, who also like the pizzas alice likes?
+              * constant juggle: normalization (clean schema) vs. performance (wide rows)
+              * object-relational impedance mismatch: if a value class has a `list` property, you can either store that list in a separate table, or encode it in some form (json, proto, ...)
             </aside>
           </section>
 
           <section>
             <h2>Property Graph</h2>
-            <img src="img/grateful-dead-schema.png" height="200px"/>
+            <img src="img/property-graph.png" height="400px"/>
             <aside class="notes" data-markdown>
               * quick definition: when I say "graph" I actually mean "property graph"
-              * vertices connected by edges, each of which have one label and 0..n properties
+              * vertices connected by directed edges, each of which have one label and 0..n properties
               * simple, natural model
+              * schema typically optional: no schema for exploratory stuff, define schema once domain is better understood
+
+              Consider graphs for:
+              * their simpler model, no fight with object-relational impedance mismatch
+              * highly relational domains
             </aside>
           </section>
 
           <section>
-            <img src="img/graph-use-cases.png" />
+            <h2>(friends of friends)^n</h2>
+            <img src="img/traversal-time-neo4j.png" height="250px"/>
             <aside class="notes" data-markdown>
-              * natural language processing, markov chains
-              * code property graph: data flows, control flows
+              * archetypical motivational example: social network, finding friends of friends
+              * 1M people, each with ~50 friends
+              * img: attention, propaganda. from the free oreilly graphdb book (written by neo4j). 
+              * you can optimise your data in a relational db to workaround that, but you get this for free in a graphdb
+            </aside>
+          </section>
 
-              Consider graphs for:
-              * simpler model, no fight with object-relational impedance mismatch
-              * highly relational domains
+          <section>
+            <img src="img/cpg.png" height="450px" />
+            <aside class="notes" data-markdown>
+              * example, to get an idea where a graph makes complete sense
+              * code property graph
+              * parse source code (java, .net, js, ...) into this language neutral form, which is our domain
+              * control flow, data flow, program dependence
+              * run traversals to find meaning and find things that are connected, that maybe shouldn't be connected.
+                * password coming in via http that ends up in a logfile (hello twitter)
+                * sql, bytecode, filepath injections
+              * traverse many connections
             </aside>
           </section>
         </section>
@@ -105,20 +148,26 @@ WHERE person.id = 10
         <!-- query languages -->
         <section>
           <section>
+            <h2>Query languages</h2>
+            <aside class="notes" data-markdown>
+              * query/traversal
+              * given a graph with vertices and edges, there's different options to retrieve information (query/traverse it)
+            </aside>
+          </section>
+          <section>
             <h2>Cypher</h2>
             <pre><code data-trim class="cypher">
-// get woody allen movies past 2010
 MATCH (Actor {name: 'Woody Allen'})
       -[:ACTED_IN]->(movie:Movie)
 WHERE movie.year > 2010
 RETURN movie
             </code></pre>
-            <img src="img/neo4j.png" height="150px" />
+            <img src="img/neo4j-bg.png" height="100px" />
             <aside class="notes" data-markdown>
-              * originally created by Neo4j
-              * openCypher: SAP HANA, Redis, gremlin, ...
+              * get woody allen movies past 2010
               * declarative, similar to how you would draw it
               * probably great for many use cases, also hear of problems with it, not an expert
+              * originally created by Neo4j -> openCypher: SAP HANA, Redis, gremlin, ...
               * libs: [cypher for spark](https://github.com/opencypher/cypher-for-apache-spark), [AnormCypher](https://github.com/AnormCypher/AnormCypher)
               * but you still write the cypher query as a string, i.e. no type safety, mostly helps with scaffolding
             </aside>
@@ -126,8 +175,6 @@ RETURN movie
           <section>
             <H2>SPARQL (W3C)</H2>
             <pre><code data-trim class="sparql">
-// get names of people older than 24 years
-                
 PREFIX info:  &lt;http://somewhere/peopleInfo#&gt;
 PREFIX vcard: &lt;http://www.w3.org/2001/vcard-rdf/3.0#&gt;
 
@@ -141,137 +188,179 @@ WHERE
             </code></pre>
             <img src="img/sparql.png" height="150px"/>
             <aside class="notes" data-markdown>
+              * get names of people older than 24 years
               * for RDF (Resource Description Framework): making statements about resources, in expressions of the form subject–predicate–object, known as triples.
               * low level primitive, one can build additional ontology languages upon RDF
                 * format naming and definition of types/properties/relationships of entities in a domain
-              * allows for a query to consist of triple patterns, conjunctions, disjunctions, and optional patterns.
-              * implemented by a long list of DBs
               * found only one scala lib which was for specific spark, against create your own strings
             </aside>
           </section>
           <section>
             <h2>Gremlin (Apache TinkerPop)</h2>
             <pre><code data-trim class="groovy">
-// What are the names of Gremlin's friends' friends?
 g.V().has("name","gremlin")
-     .out("knows")
-     .out("knows")
+     .out("friend")
+     .out("friend")
      .values("name")
             </code></pre>
             <img src="img/tinkerpop-splash.png" height="250px"/>
             <aside class="notes" data-markdown>
-              * main style: imperative
-              * steps: has/in/out/both/values/
-              * declarative style available (match step)
+              * What are the names of Gremlin's friends' friends?
+              * main style: imperative, declarative style available (match step)
+              * steps: combine and pipe together
               * turing complete / computationally universal
-              * implemented by a long list of DBs, more on that later
-            </aside>
-          </section>
-          <section>
-            <img src="img/tp-query-libs.png" height="450px"/>
-            <aside class="notes" data-markdown>
+              * implemented by a long list of DBs 
               * libraries for many host languages: java, groovy, python, js, .net
             </aside>
           </section>
         </section>
 
-        <!-- gremlin-scala -->
         <section>
           <section>
             <img src="img/gremlin-scala-logo.png" height="200px"/><br/>
             <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a>
             <aside class="notes" data-markdown>
-              * created in it's current form  with many community contributions
+              * scala wrapper for gremlin-java
+              * scala friendly function syntax
               * objective: use scala's advanced type system
                 * help in your IDE by deriving types
                 * prevent families of illegal queries
+              * make use of the fact that scala is great for embedding DSLs
             </aside>
           </section>
           <section>
             <h2>setup</h2>
             <pre><code data-trim class="scala">
-import gremlin.scala._
-implicit val graph = TinkerFactory.createModern.asScala
-val g = graph.traversal
-
-g.V //all vertices
-g.E //all edges
-g.V(10) //vertex with id 10
-g.E(20) //edge with id 20
+              import gremlin.scala._
+              implicit val graph = TinkerGraph.open.asScala
             </code></pre>
             <aside class="notes" data-markdown>
-              * graph: reference to graph
-              * traversalSource: start a new traversal
+              * reference to graph - could be local (in memory, backed by fs), remote
+            </aside>
+          </section>
+          <section>
+            <h2>schema</h2>
+            define once, use everywhere
+            <pre><code data-trim class="scala">
+object PersonNode {
+  val name = Key[String]("name")
+  val age = Key[Int]("age")
+}
+
+object LikesEdge {
+  val howMuch = Key[Double]("howMuch")
+}
+            </code></pre>
+            <aside class="notes" data-markdown>
+              * graph db may or may not enforce the same schema
+              * define domain schema once, use everywhere to get help from compiler/IDE and type safety and IDE completion
+              * we defined our schema in json, used for all sorts of things: protos, domain classes, other language impl
+            </aside>
+          </section>
+
+          <section>
+            <h2>arrow syntax</h2>
+            <pre><code data-trim class="scala">
+              val alice = graph + ("person", name -> "alice", age -> 35)
+              val tonno = graph + ("pizza", name -> "tonno")
+
+              alice --- "likes" --> tonno
+              alice --- ("likes", howMuch -> 3) --> tonno
+            </code></pre>
+            <aside class="notes" data-markdown>
+              * properties: type safe: IDE help / compiler validation
+              * edges can be the other way around, or bidirectional
+              * can use case classes for adding and retrieving vertices, as well
+              * user contribution
+              * made me realise how nice scala is for embedding a dsl
+            </aside>
+          </section>
+          <section>
+						<h2>case classes</h2>
+            <pre><code data-trim class="scala">
+              @label("person")
+              case class Person(@id id: Option[Int] = None,
+                                name: String,
+                                age: Option[Int])
+
+              val alice = graph + Person(name = "alice", age = Some(35))
+              alice.toCC[Person] // Person with id set
+            </code></pre>
+            <aside class="notes" data-markdown>
+              * (blackbox) macro for mapping vertices from/to case classes
+              * handles Option[A]: automatically unwraps it
+              * id is set by the graph
+              * has some rough edges (and a few open tickets), e.g. around using list
+              * was about to rewrite in scalamacros backed by scala.meta, but it felt like progress has stalled and direction a little unclear
+            </aside>
+          </section>
+
+          <section>
+            <h2>traversal basics</h2>
+            <pre><code data-trim class="scala">
+              val g = graph.traversal
+            </code></pre>
+            <pre><code data-trim class="scala">
+              g.V // GremlinScala[Vertex]
+              g.V.toList // List[Vertex]
+            </code></pre>
+            <pre><code data-trim class="scala">
+              g.V(1) // GremlinScala[Vertex]
+              g.V(1).headOption // Option[Vertex]
+            </code></pre>
+            <aside class="notes" data-markdown>
               * `g` convention for naming the TraversalSource
+              * lazy: execute with `toList`, `toSet`, `headOption` etc.
             </aside>
           </section>
           <section>
             <h2>out step</h2>
             <pre><code data-trim class="scala">
-g.V(1).outE("knows").inV
-g.V(1).out("knows")
+g.V(1).out("likes") // GremlinScala[Vertex]
+            </code></pre>
+            <pre><code data-trim class="scala">
+g.V(1).outE("likes").inV // GremlinScala[Vertex]
             </code></pre>
             <aside class="notes" data-markdown>
-              * lazy: execute with `toList`, `toSet`, `headOption` etc.
             </aside>
           </section>
           <section>
             <h2>has step</h2>
-            <pre><code data-trim class="scala">
-g.V.has("name")
-g.V.has("age", P.between(25, 35))
-g.V.hasLabel("person")
-            </code></pre>
+            <pre><code data-trim class="scala">g.V.hasLabel("person") // GremlinScala[Vertex]</code></pre>
+            <pre><code data-trim class="scala">g.V.has(name) // GremlinScala[String]</code></pre>
+            <pre><code data-trim class="scala">g.V.has(age, P.between(25, 35)) // GremlinScala[Int]</code></pre>
             <aside class="notes" data-markdown>
-              * P: Predicate
+              * IDE helps with types
+              * P: Predicate: only compiles with two Ints
             </aside>
           </section>
           <section>
-            <h2>group by</h2>
+            <h2>group</h2>
             <pre><code data-trim class="scala">
-g.V.group(By.label)
-g.V.group(By(__.outE.count))
+                g.V.group(By.label)
+                // GremlinScala[Map[String, Collection[Vertex]]]
+            </code></pre>
+            <pre><code data-trim class="scala">
+                g.V.group(By(__.outE.count))
+                // GremlinScala[Map[Long, Collection[Vertex]]]
+            </code></pre>
+            <pre><code data-trim class="scala">
+                g.V.has(age).groupCount(By(age))
+                // GremlinScala[Map[Int, Long]]
             </code></pre>
             <aside class="notes" data-markdown>
+              * degree: how many outgoing edges from a specific vertex
             </aside>
           </section>
           <section>
             <h2>repeat</h2>
             <pre><code data-trim class="scala">
-g.V(1).repeat(_.out).until(_.outE.count.is(P.eq(0)))
+                g.V(1)
+                .repeat(_.out)
+                .until(_.outE.count.is(P.eq(0)))
             </code></pre>
             <aside class="notes" data-markdown>
-            </aside>
-          </section>
-          <section>
-            <h2>using types</h2>
-            <pre><code data-trim class="scala">
-// schema: define once, use everywhere
-val name = Key[String]("name")
-val age = Key[Int]("age")
-
-g.V.value(name)
-// GremlinScala[String]
-
-g.V.has(age).groupCount(By(age))
-// GremlinScala[Map[Int, Long]]
-            </code></pre>
-            <aside class="notes" data-markdown>
-              * let's use the type system
-              * define domain schema once, use everywhere to get help from compiler/IDE and type safety and IDE completion
-              * we defined our schema in json, used for all sorts of things: protos, domain classes, other language impl.
-            </aside>
-          </section>
-          <section>
-            <h2>catch errors at compile time</h2>
-            <pre><code data-trim class="scala">
-              g.V.outE.outE
-              g.V.value(name).mean //name: Key[String]
-            </code></pre>
-            <aside class="notes" data-markdown>
-              * prevent families of illegal queries
-              * dynamic languages can't catch these
-              * simpler compilers like java can only detect a subset
+              * traverse from one starting node until the outermost vertices in the graph, which don't have any outgoing edges any more: discover the new frontier
             </aside>
           </section>
           <section>
@@ -279,7 +368,7 @@ g.V.has(age).groupCount(By(age))
             <pre><code data-trim class="scala">
               g.V.as("a")
                 .outE.as("b")
-                .value(weight).as("c")
+                .value(howMuch).as("c")
                 .select
               // GremlinScala[(Vertex, Edge, Double)]
             </code></pre>
@@ -291,176 +380,45 @@ g.V.has(age).groupCount(By(age))
             </aside>
           </section>
           <section>
-            <h2>arrow syntax</h2>
+            <h2>catch errors at compile time</h2>
             <pre><code data-trim class="scala">
-              paris --- "OneWayRoad" --> london
-              paris <-- "OtherWayAround" --- london
-              paris <-- ("Eurostar", Distance -> 495) --> london
+              g.V.outE.outE
+            </code></pre>
+            <pre><code data-trim class="scala">
+              g.V(1).property(name, 5) //name: Key[String]
+            </code></pre>
+            <pre><code data-trim class="scala">
+              g.V.value(name).mean
             </code></pre>
             <aside class="notes" data-markdown>
-              * this was contributed
-              * made me realise how nice scala is for embedding a dsl
+              * prevent families of illegal queries
+              * dynamic languages can't catch these
+              * simpler compilers like java can only detect a subset
             </aside>
           </section>
-          <section>
-						<h2>case classes</h2>
-            <pre><code data-trim class="scala">
-              @label("example")
-              case class Example(@id id: Option[Int],
-                                longValue: Long,
-                                stringValue: Option[String])
 
-              val v = graph + Example(
-                None, Long.MaxValue, Some("optional value")
-              )
-              v.toCC[Example] // equal to `example`, but with id set
-
-              graph.V.hasLabel[Example]
-            </code></pre>
-            <aside class="notes" data-markdown>
-              * (blackbox) macro for mapping vertices from/to case classes
-              * has some rough edges (and a few open tickets). works fine for simple stuff
-              * was about to rewrite in scalamacros backed by scala.meta, but it felt like progress has stalled and direction a little unclear
-            </aside>
-          </section>
           <section>
-            <h2>Summary</h2>
+            <h2>Downsides: Tinkerpop</h2>
             <ul>
-              <li>Scala friendly function signatures</li>
-              <li>type safety</li>
-              <li>nice DSL to create vertices and edges</li>
-              <li>minimal runtime overhead</li>
+              <li>db maturity</li>
+              <li>db driver</li>
+              <li>tooling</li>
             </ul>
             <aside class="notes" data-markdown>
-              * Minimal runtime overhead - only allocates additional instances if absolutely necessary
-              * Nothing is hidden away, you can always easily access the underlying Gremlin-Java objects if needed, e.g. to access graph db specifics things like indexes
+              * graph db maturity - rapidly expanding space, however mixed maturity
+              * quality of db driver: query optimisation, automatic use of indices
+              * tooling: far behind the steam of relational dbs
+              * prepare to step in and help in the spirit of libre & open source software, ask your employer to not just take but also contribute back.
+              * gremlin-scala: plenty of areas for improvement, help appreciated, and already got many great contributions
             </aside>
           </section>
         </section>
 
-        <!-- <section> -->
-        <!--   <img src="img/oltp-vs-olap.png" /> -->
-        <!--   <aside class="notes" data-markdown> -->
-        <!--     * online transaction processing: fast turnaround, limited data accessed, random data access, sequential processing -->
-        <!--     * online analytical processing: long running, entire data set accessed, sequential data access, parallel processing, batch processing -->
-        <!--   </aside> -->
-        <!-- </section> -->
-
-        <section>
-          <section>
-            <h2>deployment options</h2>
-            <aside class="notes" data-markdown>
-              * rough categorisation as follows
-              * some DBs implement all of them, in their db specific driver
-              * choose depending on your use case
-              * api for traversals exactly the same
-            </aside>
-          </section>
-          <section>
-            <h2>in memory</h2>
-            <pre><code data-trim class="scala">
-              TinkerGraph.open
-              new OrientGraphFactory(s"memory:my-db-name").getNoTx
-
-              conf.setProperty("storage.backend","inmemory")
-              JanusGraphFactory.open(conf)
-            </code></pre>
-            <aside class="notes" data-markdown>
-              * tinkergraph, orientdb, neo4j, janusgraph, ...
-              * upper limit: memory size
-            </aside>
-          </section>
-          <section>
-            <h2>local via filesytem</h2>
-            <pre><code data-trim class="scala">
-              Neo4jGraph.open("/path/to/db")
-              new OrientGraphFactory("plocal:/path/to/db")
-            </code></pre>
-            <aside class="notes" data-markdown>
-              * like in memory, but backed by file system
-              * swapping implemented in db, efficiency depends on db
-              * orientdb, neo4j, ...
-            </aside>
-          </section>
-          <section>
-            <h2>remote</h2>
-            <pre><code data-trim class="scala">
-              val serializer = new GryoMessageSerializerV3d0(
-               GryoMapper.build.addRegistry(TinkerIoRegistryV3d0.instance))
-
-              val cluster = Cluster.build.addContactPoint("localhost")
-               .port(8182).serializer(serializer).create
-
-              EmptyGraph.instance.asScala.configure(
-               _.withRemote(DriverRemoteConnection.using(cluster)))
-            </code></pre>
-            <img src="img/remote-graph.png" height="200px"/>
-            <aside class="notes" data-markdown>
-              * same traversal api, but no lambdas
-              * some dbs 'API' is to send gremlin-groovy strings over the wire: highly discouraged
-                * no compiler/ide support (strings)
-                * prone to security vulnerabilities
-              * better model: gremlin bytecode
-              * minimise need to serialise data over the wire
-              * janusgraph, neo4j, orientdb, amazon neptune, MS CosmosDB, DSEGraph
-            </aside>
-          </section>
-          <section>
-            <h2>gremlin-server</h2>
-            <img src="img/gremlin-server.png" height="250px"/>
-            <aside class="notes" data-markdown>
-              * server allows to make any tinkerpop graph db a remote db, by simply running it locally exposing it via gremlin/gremlin bytecode
-              * makes any db usable by multiple clients
-            </aside>
-          </section>
-        </section>
-
-        <section>
-          <section>
-            <img src="img/graph-dbs.png" height="550px"/>
-            <aside class="notes" data-markdown>
-              * strong new contenders joined recently
-              * maturity varies (automatic use of indices, query optimisation)
-            </aside>
-          </section>
-          <section>
-            <h2>ShiftLeft Tinkergraph</h2>
-            <ul>
-              <li>70% less memory</li>
-              <li>strict schema validation</li>
-            </ul>
-            <br/>
-            <br/>
-            <a href="https://github.com/ShiftLeftSecurity/tinkergraph-gremlin">https://github.com/ShiftLeftSecurity/tinkergraph-gremlin</a><br/>
-            <aside class="notes" data-markdown>
-              * TinkerGraph: reference implementation, in memory
-              * we've open sourced our specialized version of TinkerGraph: 70% less memory, strict schema validation 
-            </aside>
-          </section>
-        </section>
-
-        <!-- downsides: not for everyone (keep out sign) -->
-        <section>
-          <h2>Downsides: Tinkerpop</h2>
-          <ul>
-            <li>db maturity</li>
-            <li>db driver</li>
-            <li>tooling</li>
-            <li>only small-medium sized datasets</li>
-          </ul>
-          <aside class="notes" data-markdown>
-            * graph db maturity - rapidly expanding space, however mixed maturity
-            * quality of db driver: query optimisation, automatic use of indices
-            * tooling: far behind the steam of relational dbs
-            * prepare to step in and help in the spirit of libre & open source software, ask your employer to not just take but also contribute back.
-            * gremlin-scala: plenty of areas for improvement, help appreciated, and already got many great contributions
-          </aside>
-        </section>
 
         <!-- Getting started -->
         <section>
           <section>
-            <img src="img/gse.png" height="450px"/>
+            <!-- <img src="img/gse.png" height="450px"/> -->
             <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a><br/>
             <a href="https://github.com/mpollmeier/gremlin-scala-examples">https://github.com/mpollmeier/gremlin-scala-examples</a><br/>
             <aside class="notes" data-markdown>
@@ -477,12 +435,50 @@ g.V.has(age).groupCount(By(age))
           </section>
 
           <section>
+            <h2>ShiftLeft Tinkergraph</h2>
+            <ul>
+              <li>70% less memory</li>
+              <li>strict schema validation</li>
+            </ul>
+            <br/>
+            <br/>
+            <a href="https://github.com/ShiftLeftSecurity/tinkergraph-gremlin">https://github.com/ShiftLeftSecurity/tinkergraph-gremlin</a><br/>
+            <aside class="notes" data-markdown>
+              * TinkerGraph: reference implementation, in memory
+              * we've open sourced our specialized version of TinkerGraph: 70% less memory, strict schema validation
+            </aside>
+          </section>
+
+          <section>
+            <h2>Summary</h2>
+            <ul>
+              <li>graphs</li>
+              <li>gremlin-scala: typesafe dsl</li>
+              <li>nice DSL to create vertices and edges</li>
+            </ul>
+            <aside class="notes" data-markdown>
+              * graphs: simpler model, better performance for connected data
+              * optional schema: faster turnaround in early phases, while exploring domain
+              * gremlin: api for local and remote graphs
+              * Minimal runtime overhead - only allocates additional instances if absolutely necessary
+              * Nothing is hidden away, you can always easily access the underlying Gremlin-Java objects if needed, e.g. to access graph db specifics things like indexes
+            </aside>
+          </section>
+
+          <section>
+            <h2>thank you!</h2>
+            <aside class="notes" data-markdown>
+            </aside>
+          </section>
+
+          <section>
             <a href="https://github.com/mpollmeier/gremlin-scala">https://github.com/mpollmeier/gremlin-scala</a><br/>
             <a href="https://github.com/mpollmeier/gremlin-scala-examples">https://github.com/mpollmeier/gremlin-scala-examples</a><br/>
             <a href="http://tinkerpop.apache.org">http://tinkerpop.apache.org</a>
             <a href="https://github.com/ShiftLeftSecurity/tinkergraph-gremlin">https://github.com/ShiftLeftSecurity/tinkergraph-gremlin</a><br/>
             <a href="https://www.michaelpollmeier.com">https://www.michaelpollmeier.com</a><br/>
             <a href="https://twitter.com/pollmeier"></a>
+            <img src="img/shiftleft-logo.png" style="background: none" height="50px" />
             <aside class="notes" data-markdown>
             </aside>
           </section>
@@ -514,3 +510,72 @@ g.V.has(age).groupCount(By(age))
 		</script>
 	</body>
 </html>
+
+        <!-- <section> -->
+        <!--   <img src="img/oltp-vs-olap.png" /> -->
+        <!--   <aside class="notes" data-markdown> -->
+        <!--     * online transaction processing: fast turnaround, limited data accessed, random data access, sequential processing -->
+        <!--     * online analytical processing: long running, entire data set accessed, sequential data access, parallel processing, batch processing -->
+        <!--   </aside> -->
+        <!-- </section> -->
+
+        <!-- <section> -->
+        <!--   <section> -->
+        <!--     <h2>deployment options</h2> -->
+        <!--     <aside class="notes" data-markdown> -->
+        <!--       * rough categorisation as follows -->
+        <!--       * some DBs implement all of them, in their db specific driver -->
+        <!--       * choose depending on your use case -->
+        <!--       * api for traversals exactly the same -->
+        <!--     </aside> -->
+        <!--   </section> -->
+        <!--   <section> -->
+        <!--     <h2>in memory</h2> -->
+        <!--     <pre><code data-trim class="scala"> -->
+        <!--       TinkerGraph.open -->
+        <!--       new OrientGraphFactory(s"memory:my-db-name").getNoTx -->
+
+        <!--       conf.setProperty("storage.backend","inmemory") -->
+        <!--       JanusGraphFactory.open(conf) -->
+        <!--     </code></pre> -->
+        <!--     <aside class="notes" data-markdown> -->
+        <!--       * tinkergraph, orientdb, neo4j, janusgraph, ... -->
+        <!--       * upper limit: memory size -->
+        <!--     </aside> -->
+        <!--   </section> -->
+        <!--   <section> -->
+        <!--     <h2>local via filesytem</h2> -->
+        <!--     <pre><code data-trim class="scala"> -->
+        <!--       Neo4jGraph.open("/path/to/db") -->
+        <!--       new OrientGraphFactory("plocal:/path/to/db") -->
+        <!--     </code></pre> -->
+        <!--     <aside class="notes" data-markdown> -->
+        <!--       * like in memory, but backed by file system -->
+        <!--       * swapping implemented in db, efficiency depends on db -->
+        <!--       * orientdb, neo4j, ... -->
+        <!--     </aside> -->
+        <!--   </section> -->
+        <!--   <section> -->
+        <!--     <h2>remote</h2> -->
+        <!--     <pre><code data-trim class="scala"> -->
+        <!--       val serializer = new GryoMessageSerializerV3d0( -->
+        <!--        GryoMapper.build.addRegistry(TinkerIoRegistryV3d0.instance)) -->
+
+        <!--       val cluster = Cluster.build.addContactPoint("localhost") -->
+        <!--        .port(8182).serializer(serializer).create -->
+
+        <!--       EmptyGraph.instance.asScala.configure( -->
+        <!--        _.withRemote(DriverRemoteConnection.using(cluster))) -->
+        <!--     </code></pre> -->
+        <!--     <img src="img/remote-graph.png" height="200px"/> -->
+        <!--     <aside class="notes" data-markdown> -->
+        <!--       * same traversal api, but no lambdas -->
+        <!--       * some dbs 'API' is to send gremlin-groovy strings over the wire: highly discouraged -->
+        <!--         * no compiler/ide support (strings) -->
+        <!--         * prone to security vulnerabilities -->
+        <!--       * better model: gremlin bytecode -->
+        <!--       * minimise need to serialise data over the wire -->
+        <!--       * janusgraph, neo4j, orientdb, amazon neptune, MS CosmosDB, DSEGraph -->
+        <!--     </aside> -->
+        <!--   </section> -->
+        <!-- </section> -->
