@@ -122,13 +122,12 @@ WHERE person.id = 1
             <h2>Property Graph</h2>
             <img src="img/property-graph.png" height="400px" class="shadow"/>
             <aside class="notes" data-markdown>
-              * quick definition: when I say "graph" I actually mean "property graph"
-              * vertices connected by directed edges, each of which have one label and 0..n properties
-              * simple, natural model
+              * quick definition: when I say "graph" I actually mean "directed property graph"
+              * vertices connected by directed edges, each of which have one label, one id and 0..n properties
+              * simple, natural model, no fight with object-relational impedance mismatch
               * schema typically optional: no schema for exploratory stuff, define schema once domain is better understood
               * ad hoc adding of relationships without a burdon
-              * no fight with object-relational impedance mismatch
-              * highly relational domains
+              * great for highly relational domains
             </aside>
           </section>
 
@@ -226,6 +225,8 @@ g.V().has("name", "Alice")
                 * help in your IDE by deriving types
                 * prevent families of illegal queries
               * make use of the fact that scala is great for embedding DSLs
+              * minimal runtime overhead - only allocates additional instances if absolutely necessary
+              * nothing is hidden away, you can always easily access the underlying Gremlin-Java objects if needed, e.g. to access graph db specifics things like indexes
             </aside>
           </section>
           <section>
@@ -246,11 +247,13 @@ g.V().has("name", "Alice")
             define once, use everywhere
             <pre><code data-trim class="scala">
 object PersonNode {
+  val label = "person"
   val name = Key[String]("name")
   val age = Key[Int]("age")
 }
 
 object LikesEdge {
+  val label = "likes"
   val howMuch = Key[Double]("howMuch")
 }
             </code></pre>
@@ -265,11 +268,11 @@ object LikesEdge {
           <section>
             <h2>arrow syntax</h2>
             <pre><code data-trim class="scala">
-              val alice = graph + ("person", name -> "alice", age -> 35)
-              val tonno = graph + ("pizza", name -> "tonno")
+              val alice = graph + (person, name -> "alice", age -> 35)
+              val tonno = graph + (pizza, name -> "tonno")
 
-              alice --- "likes" --> tonno
-              alice --- ("likes", howMuch -> 3) --> tonno
+              alice --- likes --> tonno
+              alice --- (likes, howMuch -> 3) --> tonno
             </code></pre>
             <img src="img/property-graph.png" height="300px" class="shadow"/>
             <aside class="notes" data-markdown>
@@ -322,10 +325,10 @@ object LikesEdge {
           <section>
             <h2>out/outE</h2>
             <pre><code data-trim class="scala">
-g.V(1).out("likes") // GremlinScala[Vertex]
+g.V(1).out(likes) // GremlinScala[Vertex]
             </code></pre>
             <pre><code data-trim class="scala">
-g.V(1).outE("likes").inV // GremlinScala[Vertex]
+g.V(1).outE(likes).inV // GremlinScala[Vertex]
             </code></pre>
             <img src="img/gremlin-edge.png" height="150px"/>
             <img src="img/property-graph.png" height="300px" class="shadow"/>
@@ -336,9 +339,9 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
             <h2>out/in</h2>
             <pre><code data-trim class="scala">
               g.V(1)         // Alice
-               .out("likes") // pizzas Alice likes
-               .in("likes")  // people who like the same pizzas
-               .out("likes") // pizzas those people like
+               .out(likes) // pizzas Alice likes
+               .in(likes)  // people who like the same pizzas
+               .out(likes) // pizzas those people like
             </code></pre>
             <img src="img/gremlin-edge.png" height="150px"/>
             <img src="img/property-graph.png" height="300px" class="shadow"/>
@@ -350,9 +353,9 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           </section>
           <section>
             <h2>has step</h2>
-            <pre><code data-trim class="scala">g.V.hasLabel("person") // GremlinScala[Vertex]</code></pre>
+            <pre><code data-trim class="scala">g.V.hasLabel(person) // GremlinScala[Vertex]</code></pre>
             <pre><code data-trim class="scala">g.V.has(name) // GremlinScala[String]</code></pre>
-            <pre><code data-trim class="scala">g.V.has(age, P.between(25, 35)) // GremlinScala[Int]</code></pre>
+            <pre><code data-trim class="scala">g.V.has(age, P.between(25, 35)) // GremlinScala[Vertex]</code></pre>
             <img src="img/gremlin-french.png" height="150px"/>
             <aside class="notes" data-markdown>
               * IDE helps with types
@@ -399,13 +402,13 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
               g.V.as("a")
                 .outE.as("b")
                 .value(howMuch).as("c")
-                .select
+                .select()
               // GremlinScala[(Vertex, Edge, Double)]
             
 </code></pre>
             <img src="img/gremlin-mozart.png" height="150px"/>
             <aside class="notes" data-markdown>
-              * selecting multiple things along the way
+              * selecting multiple things along the way, doesn't matter how we name them in this case
               * groovy/java would return Array[Object] (at compile time)
               * also possible to select just a subset of the labelled steps
               * works by storing the labelled types in a type member as an HList
@@ -417,13 +420,16 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           <section>
             <h2>catch errors at compile time</h2>
             <pre><code data-trim class="scala">
-              g.V.outE.outE
+                g.V.outE.outE
+                // cannot prove that `Edge <:< Vertex`
             </code></pre>
             <pre><code data-trim class="scala">
-              g.V(1).property(name, 5) //name: Key[String]
+                g.V(1).property(name, 5)
+                // name: Key[String]
             </code></pre>
             <pre><code data-trim class="scala">
-              g.V.value(name).mean
+                g.V.value(name).mean
+                // No implicit view available from String => Number
             </code></pre>
             <img src="img/gremlin-lab-coat.png" height="150px"/>
             <aside class="notes" data-markdown>
@@ -441,16 +447,16 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
             </code></pre>
             instead of
             <pre><code data-trim class="scala">
-              g.V.hasLabel("person")
+              g.V.hasLabel(person)
                .has(name, "Alice")
-               .outE("likes").has(howMuch, P.gte(3))
+               .outE(likes).has(howMuch, P.gte(3))
                .inV
               // GremlinScala[Vertex]
             </code></pre>
             <img src="img/gremlin-grad.png" class="shadow" height="150px"/>
             <aside class="notes" data-markdown>
               * define your own custom dsl with gremlin.scala.dsl
-              * in practice, PizzaSteps and GremlinScala[Vertex] are equivalent, it's just a nice DSL on top
+              * in practice, PizzaSteps and GremlinScala[Vertex] are equivalent, it's just a nice DSL on top, to not only be typesafe but use your custom types
               * as/select etc. available, but not all steps yet (purely because I didn't have the need yet)
             </aside>
           </section>
@@ -481,26 +487,25 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
             <aside class="notes" data-markdown>
               * graph db maturity - rapidly expanding space, however mixed maturity
               * quality of db driver: query optimisation, automatic use of indices
-              * tooling: far behind the steam of relational dbs
+              * tooling: far behind relational dbs
               * prepare to step in and help in the spirit of libre & open source software, ask your employer to not just take but also contribute back.
               * gremlin-scala: plenty of areas for improvement, help appreciated, and already got many great contributions
             </aside>
           </section>
 
-
           <section>
             <h2>Summary</h2>
             <ul>
-              <li>graphs: highly relational domains</li>
-              <li>typesafe query dsl</li>
-              <li>build your custom DSL</li>
+              <li>graphs: simpler model, great for highly relational domains</li>
+              <li>less mature than relational dbs</li>
+              <li>active, open and closed source</li>
+              <li>gremlin-scala</li>
             </ul>
             <aside class="notes" data-markdown>
               * graphs: simpler model, better performance for connected data
-              * optional schema: faster turnaround in early phases, while exploring domain
+              * community very active, many interesting players joined recently: amazon neptune, ms cosmosdb, janusgraph, shiftleft tinkergraph
               * gremlin: api for local and remote graphs
-              * Minimal runtime overhead - only allocates additional instances if absolutely necessary
-              * Nothing is hidden away, you can always easily access the underlying Gremlin-Java objects if needed, e.g. to access graph db specifics things like indexes
+              * gremlin-scala: typesafe query DSL, build your custom DSL
               * TP has great artwork
             </aside>
           </section>
