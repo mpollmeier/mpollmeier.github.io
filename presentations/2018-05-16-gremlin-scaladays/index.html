@@ -21,7 +21,7 @@
       }
 
       .reveal code {
-        background: #292929;
+        background: #333;
         box-shadow: none;
       }
 
@@ -257,7 +257,7 @@ object LikesEdge {
   val howMuch = Key[Double]("howMuch")
 }
             </code></pre>
-            <img src="img/gremlin-quill.png" height="150px"/>
+            <img src="img/property-graph.png" height="300px" style="position: absolute; bottom: 0px; right: 50px;" class="shadow"/>
             <aside class="notes" data-markdown>
               * graph db may or may not enforce the same schema
               * define domain schema once, use everywhere to get help from compiler/IDE and type safety and IDE completion
@@ -286,7 +286,6 @@ object LikesEdge {
           <section>
 						<h2>case classes</h2>
             <pre><code data-trim class="scala">
-              @label("person")
               case class Person(@id id: Option[Int] = None,
                                 name: String,
                                 age: Option[Int])
@@ -354,7 +353,7 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
           <section>
             <h2>has step</h2>
             <pre><code data-trim class="scala">g.V.hasLabel(person) // GremlinScala[Vertex]</code></pre>
-            <pre><code data-trim class="scala">g.V.has(name) // GremlinScala[String]</code></pre>
+            <pre><code data-trim class="scala">g.V.has(name) // GremlinScala[Vertex]</code></pre>
             <pre><code data-trim class="scala">g.V.has(age, P.between(25, 35)) // GremlinScala[Vertex]</code></pre>
             <img src="img/gremlin-french.png" height="150px"/>
             <aside class="notes" data-markdown>
@@ -443,7 +442,6 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
             <h2>custom dsl</h2>
             <pre><code data-trim class="scala">
               g.person("Alice").likes(ratedAtLeast = 3)
-              // PizzaSteps
             </code></pre>
             instead of
             <pre><code data-trim class="scala">
@@ -458,6 +456,10 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
               * define your own custom dsl with gremlin.scala.dsl
               * in practice, PizzaSteps and GremlinScala[Vertex] are equivalent, it's just a nice DSL on top, to not only be typesafe but use your custom types
               * as/select etc. available, but not all steps yet (purely because I didn't have the need yet)
+              * implementation: `PersonSteps.likes`
+              def likes(ratedAtLeast: Double) = new PizzaSteps(
+                raw.outE(likes).has(howMuch, P.gte(ratedAtLeast)).inV
+              )
             </aside>
           </section>
 
@@ -520,6 +522,7 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
             <a href="http://tinkerpop.apache.org">tinkerpop.apache.org</a>
             <a href="https://github.com/mpollmeier/gremlin-scala">github.com/mpollmeier/gremlin-scala</a><br/>
             <a href="https://www.michaelpollmeier.com">michaelpollmeier.com</a><br/>
+            <!-- <a href="mailto:michael@michaelpollmeier.com">michael@michaelpollmeier.com</a><br/> -->
             <img src="img/gremlin-gym.png" height="150px"/><br/>
             <img src="img/shiftleft-logo.png" style="background: none" height="50px" />
             <aside class="notes" data-markdown>
@@ -530,12 +533,6 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
             </aside>
           </section>
         </section>
-
-          <!-- <section> -->
-          <!--   <h2></h2> -->
-          <!--   <aside class="notes" data-markdown> -->
-          <!--   </aside> -->
-          <!-- </section> -->
 			</div>
 		</div>
 
