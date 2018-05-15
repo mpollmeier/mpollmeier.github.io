@@ -52,7 +52,7 @@
               * author of gremlin-scala
               * I work at shiftleft we do static code analysis using graph dbs to find security vulnerabilities, data leaks etc.
               * we love open source (including the giving back part). if this stuff interests you, please get in touch, we're hiring in Berlin, San Francisco and remote
-              * best to ask questions at the end (time and recording)
+              * happy to take questions at the end
             </aside>
           </section>
           <section>
@@ -79,7 +79,7 @@
               * highly optimized, very mature, great tooling, everyone knows SQL
               * Most popular model for a reason, please use it 98% of the time
               * they have some fundamental downsides, interestingly esp. when it comes to managing relations
-              * have a look at that schema: person, pizza, likes (many to many): what pizzas does nicola like?
+              * have a look at that schema: person, pizza, likes (many to many): what pizzas does alice like?
             </aside>
           </section>
 
@@ -126,9 +126,6 @@ WHERE person.id = 1
               * vertices connected by directed edges, each of which have one label and 0..n properties
               * simple, natural model
               * schema typically optional: no schema for exploratory stuff, define schema once domain is better understood
-
-              Great for
-              * simpler model
               * ad hoc adding of relationships without a burdon
               * no fight with object-relational impedance mismatch
               * highly relational domains
@@ -209,7 +206,6 @@ g.V().has("name", "Alice")
             </code></pre>
             <img src="img/tinkerpop-splash.png" height="250px"/>
             <aside class="notes" data-markdown>
-              * What are the names of Gremlin's friends' friends?
               * main style: imperative, declarative style available (match step)
               * steps: combine and pipe together
               * turing complete / computationally universal
@@ -275,7 +271,7 @@ object LikesEdge {
               alice --- "likes" --> tonno
               alice --- ("likes", howMuch -> 3) --> tonno
             </code></pre>
-            <img src="img/property-graph.png" height="200px" class="shadow"/>
+            <img src="img/property-graph.png" height="300px" class="shadow"/>
             <aside class="notes" data-markdown>
               * properties: type safe: IDE help / compiler validation
               * edges can be the other way around, or bidirectional
@@ -310,11 +306,11 @@ object LikesEdge {
               val g = graph.traversal
             </code></pre>
             <pre><code data-trim class="scala">
-              g.V // GremlinScala[Vertex]
+              g.V        // GremlinScala[Vertex]
               g.V.toList // List[Vertex]
             </code></pre>
             <pre><code data-trim class="scala">
-              g.V(1) // GremlinScala[Vertex]
+              g.V(1)            // GremlinScala[Vertex]
               g.V(1).headOption // Option[Vertex]
             </code></pre>
             <img src="img/graph-computing.png" class="shadow" style="background: white; border: 4px solid white;" height="150px"/>
@@ -332,6 +328,7 @@ g.V(1).out("likes") // GremlinScala[Vertex]
 g.V(1).outE("likes").inV // GremlinScala[Vertex]
             </code></pre>
             <img src="img/gremlin-edge.png" height="150px"/>
+            <img src="img/property-graph.png" height="300px" class="shadow"/>
             <aside class="notes" data-markdown>
             </aside>
           </section>
@@ -344,6 +341,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
                .out("likes") // pizzas those people like
             </code></pre>
             <img src="img/gremlin-edge.png" height="150px"/>
+            <img src="img/property-graph.png" height="300px" class="shadow"/>
             <aside class="notes" data-markdown>
               * Which pizzas do people like, who also like the pizzas Alice likes?
               * without the comments, this would be a one liner
@@ -383,6 +381,9 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           <section>
             <h2>repeat</h2>
             <pre><code data-trim class="scala">
+                g.V(1).repeat(_.out).times(3)
+            </code></pre>
+            <pre><code data-trim class="scala">
                 g.V(1)
                 .repeat(_.out)
                 .until(_.outE.count.is(P.eq(0)))
@@ -400,7 +401,8 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
                 .value(howMuch).as("c")
                 .select
               // GremlinScala[(Vertex, Edge, Double)]
-            </code></pre>
+            
+</code></pre>
             <img src="img/gremlin-mozart.png" height="150px"/>
             <aside class="notes" data-markdown>
               * selecting multiple things along the way
@@ -434,9 +436,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           <section>
             <h2>custom dsl</h2>
             <pre><code data-trim class="scala">
-              g.person("Alice")
-               .likes
-               .withAtLeast(3)
+              g.person("Alice").likes(ratedAtLeast = 3)
               // PizzaSteps
             </code></pre>
             instead of
@@ -471,7 +471,7 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           <!-- </section> -->
 
           <section>
-            <h2>Downsides: Tinkerpop</h2>
+            <h2>Downsides</h2>
             <ul>
               <li>db maturity</li>
               <li>db driver</li>
@@ -491,9 +491,8 @@ g.V(1).outE("likes").inV // GremlinScala[Vertex]
           <section>
             <h2>Summary</h2>
             <ul>
-              <li>graphs: why and when</li>
+              <li>graphs: highly relational domains</li>
               <li>typesafe query dsl</li>
-              <li>nice DSL to create vertices and edges</li>
               <li>build your custom DSL</li>
             </ul>
             <aside class="notes" data-markdown>
