@@ -76,8 +76,8 @@
             <aside class="notes" data-markdown>
               * when you first learned about databases, you were probably told that this is how a db looks like
               * tables, columns (properties), rows
-              * highly optimized, very mature, great tooling, everyone knows SQL
               * Most popular model for a reason, please use it 98% of the time
+              * highly optimized, very mature, great tooling, everyone knows SQL
               * they have some fundamental downsides, interestingly esp. when it comes to managing relations
               * have a look at that schema: person, pizza, likes (many to many): what pizzas does alice like?
             </aside>
@@ -236,7 +236,7 @@ g.V().has("name", "Alice")
               implicit val graph = TinkerGraph.open.asScala
             </code></pre>
             <img src="img/gremlin-chef.png" height="150px"/><br/>
-            <a href="https://github.com/mpollmeier/gremlin-scala-examples">github.com/mpollmeier/gremlin-scala-examples</a>
+            <!-- <a href="https://github.com/mpollmeier/gremlin-scala-examples">github.com/mpollmeier/gremlin-scala-examples</a> -->
             <aside class="notes" data-markdown>
               * reference to graph - could be local (in memory, backed by fs), remote
               * gremlin-scala-examples with scaffolding for many graph dbs
@@ -324,7 +324,7 @@ object LikesEdge {
           <section>
             <h2>out/outE</h2>
             <pre><code data-trim class="scala">
-g.V(1).out(likes) // GremlinScala[Vertex]
+g.V(1).out(likes)      // GremlinScala[Vertex]
             </code></pre>
             <pre><code data-trim class="scala">
 g.V(1).outE(likes).inV // GremlinScala[Vertex]
@@ -337,7 +337,7 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
           <section>
             <h2>out/in</h2>
             <pre><code data-trim class="scala">
-              g.V(1)         // Alice
+              g.V(1)       // Alice
                .out(likes) // pizzas Alice likes
                .in(likes)  // people who like the same pizzas
                .out(likes) // pizzas those people like
@@ -352,9 +352,9 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
           </section>
           <section>
             <h2>has step</h2>
-            <pre><code data-trim class="scala">g.V.hasLabel(person) // GremlinScala[Vertex]</code></pre>
-            <pre><code data-trim class="scala">g.V.has(name) // GremlinScala[Vertex]</code></pre>
-            <pre><code data-trim class="scala">g.V.has(age, P.between(25, 35)) // GremlinScala[Vertex]</code></pre>
+            <pre><code data-trim class="scala">g.V.hasLabel(person)</code></pre>
+            <pre><code data-trim class="scala">g.V.has(name)</code></pre>
+            <pre><code data-trim class="scala">g.V.has(age, P.between(25, 35))</code></pre>
             <img src="img/gremlin-french.png" height="150px"/>
             <aside class="notes" data-markdown>
               * IDE helps with types
@@ -498,7 +498,7 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
           <section>
             <h2>Summary</h2>
             <ul>
-              <li>graphs: simpler model, great for highly relational domains</li>
+              <li>graphs: simpler model for relational domains</li>
               <li>less mature than relational dbs</li>
               <li>active, open and closed source</li>
               <li>gremlin-scala</li>
@@ -506,9 +506,8 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
             <aside class="notes" data-markdown>
               * graphs: simpler model, better performance for connected data
               * community very active, many interesting players joined recently: amazon neptune, ms cosmosdb, janusgraph, shiftleft tinkergraph
-              * gremlin: api for local and remote graphs
               * gremlin-scala: typesafe query DSL, build your custom DSL
-              * TP has great artwork
+              * local and remote (via gremlin bytecode)
             </aside>
           </section>
 
@@ -522,6 +521,7 @@ g.V(1).outE(likes).inV // GremlinScala[Vertex]
             <a href="http://tinkerpop.apache.org">tinkerpop.apache.org</a>
             <a href="https://github.com/mpollmeier/gremlin-scala">github.com/mpollmeier/gremlin-scala</a><br/>
             <a href="https://www.michaelpollmeier.com">michaelpollmeier.com</a><br/>
+            <a href="https://twitter.com/pollmeier">@pollmeier</a><br/>
             <!-- <a href="mailto:michael@michaelpollmeier.com">michael@michaelpollmeier.com</a><br/> -->
             <img src="img/gremlin-gym.png" height="150px"/><br/>
             <img src="img/shiftleft-logo.png" style="background: none" height="50px" />
