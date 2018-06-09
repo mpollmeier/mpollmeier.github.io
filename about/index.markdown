@@ -17,6 +17,9 @@ title: About me
   </ul>
 
   <img src="/images/michael-pollmeier.jpg" alt="Michael Pollmeier"/>
+  
+  <br/><br/>
+  This site is served by github pages, they likely store your IP in their server logs. I do not use any trackers, advertisements or social media share buttons, and do not store any personal data of my users. 
 
 </div>
 
