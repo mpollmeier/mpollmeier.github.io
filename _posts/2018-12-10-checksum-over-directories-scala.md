@@ -12,7 +12,7 @@ import java.io.File
 import java.nio.file.Files
 import java.security.{DigestInputStream, MessageDigest}
 
-def md5(roots: File*): Array[Byte] = {
+def md5(roots: File*): String = {
   val md = MessageDigest.getInstance("MD5")
   roots.foreach { root =>
     Files.walk(root.toPath).filter(!_.toFile.isDirectory).forEach { path =>
@@ -24,7 +24,7 @@ def md5(roots: File*): Array[Byte] = {
       dis.close
     }
   }
-  md.digest
+  md.digest.map(b => String.format("%02x", Byte.box(b))).mkString
 }
 
 // usage:
