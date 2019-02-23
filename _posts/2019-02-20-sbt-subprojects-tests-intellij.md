@@ -7,7 +7,7 @@ tags: [scala, intellij, sbt]
 ---
 When running tests from sbt it's typically a good idea to fork the jvm, e.g. to make sure there's no nasty global shared state or other leftovers hanging around from the last test. To do so, many `build.sbt` contain the setting `Test/fork := true`. 
 
-That however also means that the baseDirectory (where the test is executed from) changes to the subproject directory (see https://github.com/sbt/sbt/issues/3892). Which would be totally fine, if only Intellij Idea would follow the same logic. This is not to blame one tool or another, it's merely an inconvenience.
+That however also means that the baseDirectory (where the test is executed from) changes to the subproject directory (see <a href="https://github.com/sbt/sbt/issues/3892">sbt/issues/3892</a>). Which would be totally fine, if only Intellij Idea would follow the same logic. This is not to blame one tool or another, it's merely an inconvenience.
 
 The easiest fix I could find was to instruct sbt to use the project root, (rather than the subproject dir), which works as follows in your `subproject/build.sbt`:
 
