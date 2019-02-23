@@ -12,7 +12,6 @@
   tags:
   {% for tag in page.tags %}
     <!-- <a href="/tags.html#{{tag | cgi_encode}}">{{ tag }}</a> -->
-    {{ tag }}
-    {% unless forloop.last %}<span class="tag-separator">|</span>{% endunless %}
+    {{ tag }}{% unless forloop.last %}<span class="tag-separator">,</span>{% endunless %}
   {% endfor %}
 {% endif %}		
