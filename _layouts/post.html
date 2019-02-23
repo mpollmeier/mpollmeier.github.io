@@ -11,8 +11,10 @@ layout: default
 	{% else %}
 		<h1><a href="{{ page.url }}">{{ page.title }}</a></h1>
 	{% endif %}
-	<p class="meta">Posted on <span class="postdate">{{ page.date | date: "%b %d, %Y" }}</span></p>
-  {% include widgets/postTagList.html %}
+	<p class="meta">
+    Posted on <span class="postdate">{{ page.date | date: "%b %d, %Y" }}</span><br/>
+    {% include widgets/postTagList.html %}
+  </p>
 
 	<div class="post-content">{{ content }}</div>
 
