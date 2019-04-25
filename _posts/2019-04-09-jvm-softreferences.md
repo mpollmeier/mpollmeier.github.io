@@ -32,6 +32,10 @@ Soft references are a simple and powerful concept on the JVM, and it's very usef
 
 Your default choice should still be a caching library, but if you need better performance, or want the cache to grow and fill up the entire heap, yet shrink automatically when your application needs more space elsewhere, soft references may be for you. Beware that they are rather low level, and come with their own set of tradeoffs. As always: choose the best tool for the job, and keep soft references in the back of your head (literally). 
 
+## Update Apr 2019
+I brought this up on the openjdk mailing list and it turns out that it's only a problem when overriding `finalized` - which is needed for this use case. The good news is that as of openjdk 11 it's fixed altogether. Read the [thread on the mailing list](https://mail.openjdk.java.net/pipermail/hotspot-gc-dev/2019-April/025576.html) for more details.
+
+## Example
 Here's a simple example for such a cache, if you want to try this yourself:
 
 ```java
