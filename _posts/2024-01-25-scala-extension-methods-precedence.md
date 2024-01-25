@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Scala extension methods vs implicits: beware of precendence
+title: test1
 date: 2024-01-25
 permalink: 2024/01/scala-extension-methods-precedence
 tags: [scala]
