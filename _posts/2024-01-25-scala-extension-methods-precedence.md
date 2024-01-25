@@ -1,12 +1,14 @@
 ---
 layout: post
-title: Scala extension methods vs implicits: beware of precendence. 
+title: Scala extension methods vs implicits: beware of precendence
 date: 2024-01-25
 permalink: 2024/01/scala-extension-methods-precedence
 tags: [scala]
 ---
 
-Just noticed one important difference between extension methods and old school implicits in Scala 3: the former have a higher precedence. If that's not what you wanted, you be better off with plain old implicits. Canonical example for the scala repl:
+Scala extension methods vs implicits: beware of precendence
+
+I just noticed one important difference between extension methods and old school implicits in Scala 3: the former have a higher precedence. If that's not what you wanted, you be better off with plain old implicits. Canonical example for the scala repl:
 
 ```scala
 type A
