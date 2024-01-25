@@ -7,12 +7,11 @@ title: About me
   <h1>Michael Pollmeier</h1>
 
   <ul>
-    <li>I live in Auckland, New Zealand - a beautiful place in the southern pacific</li>
-    <li>I am passionate about Scala, graph databases and type safety</li>
-    <li>I am the creator of <a href="https://github.com/mpollmeier/gremlin-scala">Gremlin-Scala</a>, a Scala wrapper for the Gremlin Graph DSL</li>
-    <li>I'm on <a href="http://twitter.com/pollmeier">Twitter</a></li>
+    <li>I live in Detmold, Germany (returned after 10+ years in the UK and New Zealand)</li>
+    <li>I'm a software developer with a liking for Scala, graph databases and type safety</li>
     <li>my two kids work hard to make me a better manager, every day</li>
     <li>most of my projects are on <a href="https://github.com/mpollmeier/">github</a> - and they even compile an open source <a href="http://resume.github.io/?mpollmeier">resume ;)</a></li>
+    <li>I'm on <a href="https://mastodontech.de/@mpollmeier">Mastodon</a></li>
     <li>you can send me an <a href="mailto:michael@michaelpollmeier.com">email</a> </li>
     <li>my <a href="https://fileshare.michaelpollmeier.com/michaelpollmeier.asc">public gpg key</a> </li>
   </ul>
