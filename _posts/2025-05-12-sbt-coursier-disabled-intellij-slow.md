@@ -1,6 +1,6 @@
 ---
 layout: post
-title: sbt and `useCoursier := false`: beware of slow startup and intellij import times
+title: sbt and "useCoursier := false": beware of slow startup and intellij import times
 date: 2025-05-12
 permalink: 2025/5/sbt-coursier-disabled-intellij-slow
 tags: [scala, sbt]
