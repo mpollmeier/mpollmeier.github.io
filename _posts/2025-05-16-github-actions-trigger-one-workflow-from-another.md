@@ -1,6 +1,6 @@
 ---
 layout: post
-title: github actions: trigger one workflow from another
+title: github actions - trigger one workflow from another
 date: 2025-05-16
 permalink: 2025/5/github-actions-trigger-one-workflow-from-another.md
 tags: [github-actions, ci]
