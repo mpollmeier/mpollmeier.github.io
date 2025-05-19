@@ -2,7 +2,7 @@
 layout: post
 title: github actions - trigger one workflow from another
 date: 2025-05-16
-permalink: 2025/5/github-actions-trigger-one-workflow-from-another.md
+permalink: 2025/5/github-actions-trigger-one-workflow-from-another
 tags: [github-actions, ci]
 ---
 
