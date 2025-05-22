@@ -10,8 +10,9 @@ If your builds run on github actions and you want to trigger one workflow from a
 
 Workaround: you can trigger another workflow using the github action [REST API](https://docs.github.com/en/rest/actions/workflows?apiVersion=2022-11-28#create-a-workflow-dispatch-event), e.g. like so:
 
+{% raw %}
 workflow-a.yml:
-```
+```yaml
 jobs:
   trigger_workflow_b:
     runs-on: ubuntu-latest
@@ -26,7 +27,7 @@ jobs:
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $\\{\{ secrets.GITHUB_TOKEN \}\}" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/workflow-b.yml/dispatches \
             -d '{"ref":"${{ env.LATEST_TAG }}"}'
 ```
@@ -43,3 +44,4 @@ jobs:
       - name: Say hello
         run: echo "Workflow B triggered by Workflow A, using ref ${{ github.ref_name }}"
 ```
+{% endraw %}
