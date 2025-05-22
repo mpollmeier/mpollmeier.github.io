@@ -11,7 +11,7 @@ If your builds run on github actions and you want to trigger one workflow from a
 Workaround: you can trigger another workflow using the github action [REST API](https://docs.github.com/en/rest/actions/workflows?apiVersion=2022-11-28#create-a-workflow-dispatch-event), e.g. like so:
 
 workflow-a.yml:
-```yaml
+```
 jobs:
   trigger_workflow_b:
     runs-on: ubuntu-latest
